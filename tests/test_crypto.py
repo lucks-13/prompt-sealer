@@ -26,4 +26,15 @@ def test_generate_nonce_is_random():
     nonce2 = generate_nonce()
     assert nonce1 != nonce2
 
-def test_encrypt_data_returns_
+def test_encrypt_data_returns_bytes():
+    key = generate_key()
+    nonce = generate_nonce()
+    plaintext = b"Hello Prompt Sealer"
+    ciphertext = encrypt_data(plaintext, key, nonce)
+    assert isinstance(ciphertext, bytes)
+
+def test_encrypted_data_is_different():
+    key = generate_key()
+    nonce = generate_nonce()
+    plaintext = b"Hello Prompt Sealer"
+    ciphertext = encrypt_data()
