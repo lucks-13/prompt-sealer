@@ -1,4 +1,4 @@
-from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data
+from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data
 
 def test_generate_key_length():
     key = generate_key()
@@ -46,3 +46,11 @@ def test_encrypted_data_contains_authenication_tag():
     plaintext = b"Hello Prompt Sealer"
     ciphertext = encrypt_data(plaintext, key, nonce)
     assert len(ciphertext) == len(plaintext) + 16
+
+def test_encrypt_and_decrypt():
+    key = generate_key()
+    nonce = generate_nonce()
+    plaintext = b"Hello Prompt Sealer"
+    ciphertext = encrypt_data(plaintext, key, nonce)
+    decrypted = decrypt_data(ciphertext, key, nonce)
+    assert decrypted == plaintext
