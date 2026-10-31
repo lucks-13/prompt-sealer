@@ -43,4 +43,11 @@ def test_stored_private_key_is_protected():
 def test_load_private_key_returns_private_key():
     original_key = generate_private_key()
     stored_key = store_private_key(original_key)
-    loaded
+    loaded_key = load_private_key(stored_key)
+    assert isinstance(loaded_key, type(original_key))
+
+def test_original_key_and_loaded_key_matches():
+    original_key = generate_private_key()
+    stored_key = store_private_key(original_key)
+    loaded_key = load_private_key(stored_key)
+    original_public = 
