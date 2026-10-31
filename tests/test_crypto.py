@@ -127,4 +127,7 @@ def test_encrypt_generates_different_nonces():
     assert nonce1 != nonce2
 
 def test_derive_encryption_key():
-    shared_sec
+    shared_secret = generate_key()
+    encryption_key = derive_encryption_key(shared_secret)
+    assert isinstance(encryption_key, bytes)
+    assert len(encryption_key) == 32
