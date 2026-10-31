@@ -1,4 +1,5 @@
 import secrets
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -38,6 +39,16 @@ def generate_signing_private_key() -> Ed25519PrivateKey:
 
 def generate_signing_public_key(private_key : Ed25519PrivateKey) -> Ed25519PublicKey:
     return private_key.public_key()
+
+def sign_data(private_key : Ed25519PublicKey, message : bytes) -> bytes:
+    return private_key.sign(message)
+
+def verify_signature(public_key : Ed25519PublicKey, signature : bytes, message : bytes) -> bool:
+    try:
+        public_key.verify(signature, message)
+        return True
+    except InvalidSignature:
+        return False
      
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
