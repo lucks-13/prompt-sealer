@@ -6,8 +6,12 @@ from prompt_sealer.crypto import generate_public_key, generate_private_key
 
 def test_generate_public_key():
     private_key = generate_private_key()
-    public_key = generate_public_key(public_key)
-    
+    public_key = generate_public_key(private_key)
+    assert isinstance(public_key, X25519PublicKey)
+
+def test_generate_private_key():
+    private_key = generate_private_key()
+    assert isinstance(private_key, X25519PrivateKey)
 
 def test_generate_key_length():
     key = generate_key()
