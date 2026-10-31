@@ -24,5 +24,10 @@ def load_private_key(stored_key : bytes) -> X25519PrivateKey:
     return X25519PrivateKey.from_private_bytes(raw_key)
 
 def save_vault(data : bytes, path : Path) -> None:
-    path.
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
 
+def read_vault(path : Path) -> bytes:
+    if not path.exists():
+        raise FileNotFoundError("Vault file does not exist.")
+    return path.read_bytes()
