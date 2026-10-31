@@ -139,7 +139,7 @@ def test_serialize_public_key():
     assert isinstance(serialized, bytes)
     assert len(serialized) == 32
 
-def t
+def tes
 
 def test_entire_flow():
     private_1 = generate_private_key()
