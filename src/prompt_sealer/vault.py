@@ -34,4 +34,10 @@ def read_vault(path : Path) -> bytes:
     return path.read_bytes()
 
 def store_signing_key(private_key : Ed25519PrivateKey) -> bytes:
-    raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, )
+    raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
+    return protect_data(raw_key)
+
+def load_signing_key(stored_key : bytes) -> Ed25519PrivateKey:
+    raw_key = unprotect_data(stored_key)
+    return Ed25519PrivateKey.from_private_bytes(raw_key)
+
