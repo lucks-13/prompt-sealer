@@ -63,7 +63,10 @@ def test_generate_signing_public_key():
     assert isinstance(public_key, Ed25519PublicKey)
 
 def test_valid_signature():
-    
+    private_key = generate_signing_private_key()
+    public_key = generate_signing_public_key(private_key)
+
+    message = b
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
