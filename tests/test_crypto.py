@@ -1,8 +1,7 @@
 import pytest
 from cryptography.exceptions import InvalidTag
-from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
-from prompt_sealer.crypto import generate_public_key, generate_private_key, generate_shared_secret
+from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data, generate_public_key, generate_private_key, generate_shared_secret, derive_encryption_key
 
 def test_generate_public_key():
     private_key = generate_private_key()
@@ -126,3 +125,6 @@ def test_encrypt_generates_different_nonces():
     nonce1, ciphertext1 = encrypt_data(plaintext, key)
     nonce2, ciphertext2 = encrypt_data(plaintext, key)
     assert nonce1 != nonce2
+
+def test_derive_encryption_key():
+    shared_sec
