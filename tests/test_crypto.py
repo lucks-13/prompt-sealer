@@ -69,7 +69,9 @@ def test_valid_signature():
     signature = sign_data(private_key, message)
     assert verify_signature(public_key, signature, message) is True
 
-
+def test_modified_message_signature():
+    private_key = generate_signing_private_key()
+    public_key  = 
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
