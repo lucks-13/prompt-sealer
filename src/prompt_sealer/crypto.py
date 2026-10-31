@@ -8,9 +8,10 @@ def generate_nonce() -> bytes:
     return secrets.token_bytes(12)
 
 def encrypt_data(plaintext: bytes, key: bytes, nonce: bytes) -> bytes:
+    nonce = generate_nonce()
     aesgcm = AESGCM(key)
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
-    return ciphertext
+    return nonce, ciphertext
 
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     aesgcm = AESGCM(key)

@@ -32,7 +32,7 @@ def test_encrypt_data_returns_bytes():
     key = generate_key()
     nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key, nonce)
     assert isinstance(ciphertext, bytes)
 
 def test_encrypted_data_is_different():
@@ -70,6 +70,6 @@ def test_decryption_with_tampered_ciphertext():
     nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
     ciphertext = encrypt_data(plaintext, key, nonce)
-    tamper = (ciphertext[::-1] + bytes([ciphertext[-1]^1]))
+    tamper = (ciphertext[:-1] + bytes([ciphertext[-1] ^ 1]))
     with pytest.raises(InvalidTag):
         decrypt_data(tamper, key, nonce)
