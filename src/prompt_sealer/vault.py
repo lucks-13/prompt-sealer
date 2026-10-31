@@ -5,7 +5,7 @@ import json
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from 
+from prompt_sealer.crypto import generate_signing_private_key, generate_private_key
 
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
@@ -42,4 +42,6 @@ def store_signing_key(private_key : Ed25519PrivateKey) -> bytes:
 def load_signing_key(stored_key : bytes) -> Ed25519PrivateKey:
     raw_key = unprotect_data(stored_key)
     return Ed25519PrivateKey.from_private_bytes(raw_key)
+
+def 
 
