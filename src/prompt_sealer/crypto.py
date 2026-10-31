@@ -12,3 +12,8 @@ def encrypt_data(plaintext: bytes, key: bytes, nonce: bytes) -> bytes:
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
     return ciphertext
 
+def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
+    aesgcm = AESGCM(key)
+    plaintext = aesgcm.decrypt(nonce,ciphertext, None)
+    return plaintext
+

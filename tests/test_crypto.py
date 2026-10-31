@@ -45,4 +45,4 @@ def test_encrypted_data_contains_authenication_tag():
     nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
     ciphertext = encrypt_data(plaintext, key, nonce)
-    assert len(ciphertext) == len(plaintext)
+    assert len(ciphertext) == len(plaintext) + 16
