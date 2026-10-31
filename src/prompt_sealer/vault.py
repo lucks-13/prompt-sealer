@@ -10,5 +10,5 @@ def unprotect_data(data : bytes) -> bytes:
         result = win32crypt.CryptUnprotectData(data, None, None, None, 0)
         return result[1]
     except pywintypes.error:
-        raise ValueError("")
+        raise ValueError("Unable to decrypt protected data.") from None
 
