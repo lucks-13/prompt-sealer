@@ -1,4 +1,6 @@
 import secrets
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
 
@@ -18,6 +20,9 @@ def generate_public_key(private_key : X25519PrivateKey) -> X25519PublicKey:
 
 def generate_shared_secret(private_key : X25519PrivateKey, peer_public_key : X25519PublicKey) -> bytes:
      return private_key.exchange(peer_public_key)
+
+def derive_encryption_key(shared_secret : bytes) -> bytes:
+     hkdf = HKDF(algorithm=)
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
