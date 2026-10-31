@@ -85,4 +85,9 @@ def test_store_signing_key():
 
 def test_load_signing_key():
     original_key = generate_signing_private_key()
-    
+    stored_key = store_signing_key(original_key)
+    loaded_key = load_signing_key(stored_key)
+    assert isinstance(loaded_key, Ed25519PrivateKey)
+
+def test_loaded_signing_key_matches_original():
+    or
