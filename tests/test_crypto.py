@@ -70,4 +70,10 @@ def test_decryption_with_tampered_ciphertext():
     with pytest.raises(InvalidTag):
         decrypt_data(tamper, key, nonce)
 
-def test_encrypt_re
+def test_encrypt_rejects_invalid_key_length():
+    plaintext = b"Hello Prompt Sealer"
+    key = b"short"
+    with pytest.raises(ValueError):
+        encrypt_data(plaintext, key)
+
+def test_decrypt
