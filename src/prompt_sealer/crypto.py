@@ -14,7 +14,8 @@ def generate_private_key() -> X25519PrivateKey:
 def generate_public_key(private_key : X25519PrivateKey) -> X25519PublicKey:
      return private_key.public_key()
 
-def generate_shared_secret(private_key : X25519PrivateKey, peer)
+def generate_shared_secret(private_key : X25519PrivateKey, peer_public_key : X25519PublicKey) -> bytes:
+     return private_key.exchange(peer_public_key)
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
