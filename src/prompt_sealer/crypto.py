@@ -12,7 +12,9 @@ def generate_private_key() -> X25519PrivateKey:
      return X25519PrivateKey.generate()
 
 def generate_public_key(private_key : X25519PrivateKey) -> X25519PublicKey:
-     return X25519PrivateKey.public_key()
+     return private_key.public_key()
+
+def generate_shared_secret(private_key : X25519PrivateKey, peer)
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
