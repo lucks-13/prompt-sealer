@@ -18,3 +18,8 @@ psealer = "prompt_sealer.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8"
+]
