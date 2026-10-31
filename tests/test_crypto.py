@@ -177,9 +177,9 @@ def test_entire_flow():
     secret_2 = generate_shared_secret(private_2, public_1)
 
     salt = generate_key()
-    
-    key_1 = derive_encryption_key(secret_1)
-    key_2 = derive_encryption_key(secret_2)
+
+    key_1 = derive_encryption_key(secret_1, salt)
+    key_2 = derive_encryption_key(secret_2, salt)
 
     assert key_1 == key_2
     plaintext = b"Hello Prompt Sealer"

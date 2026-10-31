@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey, Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 def generate_key() -> bytes:
@@ -31,6 +32,8 @@ def deserialize_public_key(key : bytes) -> X25519PublicKey:
     if len(key) != 32:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
     return X25519PublicKey.from_public_bytes(key)
+
+def generate_signin
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
