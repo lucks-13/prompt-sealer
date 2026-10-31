@@ -5,8 +5,6 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-
-
 def generate_key() -> bytes:
     return secrets.token_bytes(32)
 
@@ -28,6 +26,8 @@ def derive_encryption_key(shared_secret : bytes) -> bytes:
 
 def serialize_public_key(public_key : X25519PublicKey) -> bytes:
      return public_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
+
+def deserialize_public_key
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
