@@ -1,0 +1,6 @@
+
+# Local Auto Git Push helper files
+/auto_git_push.py
+/.auto_git_push_config.json
+/.auto_git_push.log
+/setup-auto-git-push.ps1
