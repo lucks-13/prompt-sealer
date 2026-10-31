@@ -18,5 +18,7 @@ def store_private_key(private_key : X25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)
 
-def load_private_key(stored)
+def load_private_key(stored_key : bytes) -> X25519PrivateKey:
+    raw_key = unprotect_data(stored_key)
+    return X25519PrivateKey.from_private_bytes(raw_key)
 
