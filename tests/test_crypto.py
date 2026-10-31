@@ -88,4 +88,9 @@ def test_encrpt_rejects_non_bytes_plaintext():
     with pytest.raises(TypeError):
         encrypt_data("Hello Prompt Sealer", key)
 
-def 
+def test_encrypt_decrypt_empty_plaintext():
+    key = generate_key()
+    plaintext = b""
+    nonce, ciphertext = encrypt_data(plaintext, key)
+    decrypted = decrypt_data(ciphertext, key, nonce)
+    assert decrypted == plaintext
