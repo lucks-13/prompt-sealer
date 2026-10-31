@@ -1,3 +1,5 @@
+import pytest
+from cryptography.exceptions import InvalidTag
 from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data
 
 def test_generate_key_length():
@@ -54,3 +56,13 @@ def test_encrypt_and_decrypt():
     ciphertext = encrypt_data(plaintext, key, nonce)
     decrypted = decrypt_data(ciphertext, key, nonce)
     assert decrypted == plaintext
+
+def test_decryption_with_wrong_key():
+    key = generate_key()
+    dummy_key = generate_key()
+    nonce = generate_nonce()
+    plaintext = b"Hello Prompt Sealer"
+    ciphertext = encrypt_data(plaintext, key, nonce)
+    with pytest.raises(InvalidTag):
+        decrypt_data(ciphertext, dummy_key, nonce)
+def test_decryption_
