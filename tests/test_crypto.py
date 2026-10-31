@@ -15,7 +15,17 @@ def test_generate_private_key():
 
 def test_generate_shared_secret():
     private_1 = generate_private_key()
-    public_1 = 
+    public_1 = generate_public_key(private_1)
+    
+    private_2 = generate_private_key()
+    public_2 = generate_public_key(private_2)
+
+    secret_1 = generate_shared_secret(private_1, public_2)
+    secret_2 = generate_shared_secret(private_2, public_1)
+    
+    assert secret_1 == secret_2
+    assert len(secret_1) == 32
+    assert len(secret_2) == 32
 
 def test_generate_key_length():
     key = generate_key()

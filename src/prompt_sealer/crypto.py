@@ -2,6 +2,8 @@ import secrets
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
 
+
+
 def generate_key() -> bytes:
     return secrets.token_bytes(32)
 
