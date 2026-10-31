@@ -151,6 +151,13 @@ def test_invalid_length_in_deserialize():
     with pytest.raises(ValueError):
         deserialize_public_key(b"key")
 
+def test_key_exchange_using_serialized_key():
+    private_1 = generate_private_key()
+    public_1 = generate_public_key(private_1)
+            
+    private_2 = generate_private_key()
+    public_2 = generate_public_key(private_2)
+
 
 def test_entire_flow():
     private_1 = generate_private_key()
