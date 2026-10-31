@@ -25,6 +25,6 @@ def test_empty_unprotected_data():
 
 def test_unprotect_invalid_data():
     with pytest.raises(ValueError, match="Unable to decrypt protected data."):
-        unprotect_data(b"invalid protected data")
+        unprotect_data(b"Hello Prompt Sealer")
 
 

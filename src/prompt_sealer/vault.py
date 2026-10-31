@@ -1,5 +1,7 @@
 import win32crypt
 import pywintypes
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
@@ -12,3 +14,5 @@ def unprotect_data(data : bytes) -> bytes:
     except pywintypes.error:
         raise ValueError("Unable to decrypt protected data.") from None
 
+def store_private_key(private_key : X25519PrivateKey) -> bytes:
+    raw_key = private_key.private_bytes(encoding=En)
