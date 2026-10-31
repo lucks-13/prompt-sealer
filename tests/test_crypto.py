@@ -38,14 +38,13 @@ def test_encrypt_data_returns_bytes():
 def test_encrypted_data_is_different():
     key = generate_key()
     plaintext = b"Hello Prompt Sealer"
-    nonceciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key)
     assert ciphertext != plaintext
 
 def test_encrypted_data_contains_authenication_tag():
     key = generate_key()
-    nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key)
     assert len(ciphertext) == len(plaintext) + 16
 
 def test_encrypt_and_decrypt():
@@ -58,17 +57,15 @@ def test_encrypt_and_decrypt():
 def test_decryption_with_wrong_key():
     key = generate_key()
     dummy_key = generate_key()
-    nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key)
     with pytest.raises(InvalidTag):
         decrypt_data(ciphertext, dummy_key, nonce)
 
 def test_decryption_with_tampered_ciphertext():
     key = generate_key()
-    nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key)
     tamper = (ciphertext[:-1] + bytes([ciphertext[-1] ^ 1]))
     with pytest.raises(InvalidTag):
         decrypt_data(tamper, key, nonce)
