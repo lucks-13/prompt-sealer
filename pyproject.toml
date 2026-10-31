@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-psealer = "prompt_sealer.cli:app"
+prompt-sealer = "prompt_sealer.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
