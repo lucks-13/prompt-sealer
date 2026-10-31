@@ -1,6 +1,7 @@
 import pytest
 from prompt_sealer.crypto import generate_private_key
 from prompt_sealer.vault import protect_data, unprotect_data, store_private_key
+from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 
 def test_protect_data_returns_bytes():
     data = b"Hello Prompt Sealer"
@@ -35,7 +36,7 @@ def test_store_private_key_returns_bytes():
 
 def test_stored_private_key_is_protected():
     private_key = generate_private_key()
-    raw_key = private_key.private_bytes(private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption()))
+    raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     stored_key = store_private_key(private_key)
     assert stored_key != raw_key
 
