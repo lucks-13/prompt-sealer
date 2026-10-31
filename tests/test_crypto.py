@@ -1,7 +1,7 @@
 import pytest
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
-from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data, generate_public_key, generate_private_key, generate_shared_secret, derive_encryption_key
+from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data, generate_public_key, generate_private_key, generate_shared_secret, derive_encryption_key, serialize_public_key
 
 def test_generate_public_key():
     private_key = generate_private_key()
@@ -135,6 +135,9 @@ def test_derive_encryption_key():
 def test_serialize_public_key():
     private_key = generate_private_key()
     public_key = generate_public_key(private_key)
+    serialized = serialize_public_key(public_key)
+    assert isinstance(serialized, bytes)
+    assert len(serialized) == 32
 
 def test_entire_flow():
     private_1 = generate_private_key()
