@@ -1,11 +1,18 @@
 import secrets
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
 
 def generate_key() -> bytes:
     return secrets.token_bytes(32)
 
 def generate_nonce() -> bytes:
     return secrets.token_bytes(12)
+
+def generate_private_key() -> X25519PrivateKey:
+     return X25519PrivateKey.generate()
+
+def generate_public_key(private_key : X25519PrivateKey) -> X25519PublicKey:
+     return X25519PrivateKey.public_key()
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
