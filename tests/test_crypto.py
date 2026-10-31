@@ -1,6 +1,13 @@
 import pytest
 from cryptography.exceptions import InvalidTag
 from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
+from prompt_sealer.crypto import generate_public_key, generate_private_key
+
+def test_generate_public_key():
+    private_key = generate_private_key()
+    public_key = generate_public_key(public_key)
+    
 
 def test_generate_key_length():
     key = generate_key()
