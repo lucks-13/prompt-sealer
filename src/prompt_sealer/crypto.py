@@ -27,7 +27,10 @@ def derive_encryption_key(shared_secret : bytes) -> bytes:
 def serialize_public_key(public_key : X25519PublicKey) -> bytes:
      return public_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
 
-def deserialize_public_key
+def deserialize_public_key(key : bytes) -> X25519PublicKey:
+    if len(key) != 32:
+        raise ValueError("X25519 public key must be exactly 32.bytes.")
+    return X25519PublicKey.from_public_bytes(key)
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
