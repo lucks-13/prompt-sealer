@@ -142,4 +142,9 @@ def test_entire_flow():
     secret_1 = generate_shared_secret(private_1, public_2)
     secret_2 = generate_shared_secret(private_2, public_1)
 
-    
+    key_1 = derive_encryption_key(secret_1)
+    key_2 = derive_encryption_key(secret_2)
+
+    assert key_1 == key_2
+    plaintext = b"Hello Prompt Sealer"
+    nonce, ciphertext = encrypt_data()
