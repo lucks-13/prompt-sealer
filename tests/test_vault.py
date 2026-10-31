@@ -35,6 +35,8 @@ def test_store_private_key_returns_bytes():
 
 def test_stored_private_key_is_protected():
     private_key = generate_private_key()
-    raw_key = private_key.private_bytes(encoding=Encoding.Raw)
+    raw_key = private_key.private_bytes(private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption()))
+    stored_key = store_private_key(private_key)
+    assert stored_key != raw_key
 
 
