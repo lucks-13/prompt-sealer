@@ -3,6 +3,7 @@ import pywintypes
 from pathlib import Path
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 im
 
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)

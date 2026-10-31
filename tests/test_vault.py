@@ -72,4 +72,7 @@ def test_save_vault_create_parent_dir(tmp_path):
     save_vault(data, vault_path)
     assert vault_path.exists()
 
-def test_
+def test_read_missing_vault():
+    missing_path = Path("missing_vault.dat")
+    with pytest.raises(FileNotFoundError):
+        read_vault(missing_path)
