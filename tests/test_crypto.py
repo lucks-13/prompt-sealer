@@ -65,4 +65,11 @@ def test_decryption_with_wrong_key():
     ciphertext = encrypt_data(plaintext, key, nonce)
     with pytest.raises(InvalidTag):
         decrypt_data(ciphertext, dummy_key, nonce)
-def test_decryption_
+def test_decryption_with_tampered_ciphertext():
+    key = generate_key()
+    nonce = generate_nonce()
+    plaintext = b"Hello Prompt Sealer"
+    ciphertext = encrypt_data(plaintext, key, nonce)
+    tamper = (ciphertext[::-1] + bytes([ciphertext[-1]^1]))
+    with pytest.raises(InvalidTag):
+        decrypt_data(tamper, key, nonce)
