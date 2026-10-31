@@ -64,4 +64,8 @@ def test_save_and_read_vault(tmp_path):
     vault_path = tmp_path / "vault.dat"
     save_vault(data, vault_path)
     loaded_data = read_vault(vault_path)
-    
+    assert loaded_data == data
+
+def test_save_vault_create_parent_dir(tmp_path):
+    data = b"Hello Prompt Sealer"
+    vault_path
