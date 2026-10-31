@@ -28,6 +28,13 @@ def test_unprotect_invalid_data():
     with pytest.raises(ValueError, match="Unable to decrypt protected data."):
         unprotect_data(b"Hello Prompt Sealer")
 
-def test_store_private_key_returns_bytes
+def test_store_private_key_returns_bytes():
+    private_key = generate_private_key()
+    stored_key = store_private_key(private_key)
+    assert isinstance(stored_key, bytes)
+
+def test_stored_private_key_is_protected():
+    private_key = generate_private_key()
+    raw_key = private_key.private_bytes(encoding=Encoding.Raw)
 
 
