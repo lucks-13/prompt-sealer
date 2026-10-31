@@ -158,6 +158,12 @@ def test_key_exchange_using_serialized_key():
     private_2 = generate_private_key()
     public_2 = generate_public_key(private_2)
 
+    key_1 = deserialize_public_key(serialize_public_key(public_2))
+    key_2 = deserialize_public_key(serialize_public_key(public_1))
+
+    secret_1 = generate_shared_secret(private_1, key_1)
+    secret_2 = generate_shared_secret(private_2, key_2)
+    assert key_1 == key_2
 
 def test_entire_flow():
     private_1 = generate_private_key()
