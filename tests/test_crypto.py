@@ -82,7 +82,7 @@ def test_signature_with_wrong_public_key():
     wrong_private_key = generate_signing_private_key()
 
     public_key = generate_signing_public_key(private_key)
-    wrong_public_key = generate_signing_public_key(private_key)
+    wrong_public_key = generate_signing_public_key(wrong_public_key)
 
     message = b"Hello Prompt Sealer"
     sign = sign_data(private_key, message)

@@ -40,7 +40,7 @@ def generate_signing_private_key() -> Ed25519PrivateKey:
 def generate_signing_public_key(private_key : Ed25519PrivateKey) -> Ed25519PublicKey:
     return private_key.public_key()
 
-def sign_data(private_key : Ed25519PublicKey, message : bytes) -> bytes:
+def sign_data(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
     return private_key.sign(message)
 
 def verify_signature(public_key : Ed25519PublicKey, signature : bytes, message : bytes) -> bool:
