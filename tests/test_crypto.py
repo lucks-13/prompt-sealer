@@ -15,4 +15,13 @@ def test_generate_key_returns_bytes():
 
 def test_generate_nonce_length():
     nonce = generate_nonce()
-    
+    assert len(nonce) == 12
+
+def test_generate_nonce_returns_bytes():
+    nonce = generate_nonce()
+    assert isinstance(nonce, bytes)
+
+def test_generate_nonce_is_random():
+    nonce1 = generate_nonce()
+    nonce2 = generate_nonce()
+    assert nonce1 != nonce2
