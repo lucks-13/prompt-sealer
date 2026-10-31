@@ -1,5 +1,5 @@
 import pytest
-from 
+from pathlib import Path
 from prompt_sealer.crypto import generate_private_key
 from prompt_sealer.vault import protect_data, unprotect_data, store_private_key, load_private_key, save_vault, read_vault
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
@@ -58,3 +58,10 @@ def test_original_key_and_loaded_key_matches():
 def test_load_private_key_rejects_invalid_data():
     with pytest.raises(ValueError):
         load_private_key(b"Hello Prompt Sealer")
+
+def test_save_and_read_vault(tmp_path):
+    data = b"Hello Prompt Sealer"
+    vault_path = tmp_path / "vault.dat"
+    save_vault(data, vault_path)
+    loaded_data = read_vault(vault_path)
+    
