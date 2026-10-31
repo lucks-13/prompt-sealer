@@ -128,7 +128,8 @@ def test_encrypt_generates_different_nonces():
 
 def test_derive_encryption_key():
     shared_secret = generate_key()
-    encryption_key = derive_encryption_key(shared_secret)
+    salt = generate_key()
+    encryption_key = derive_encryption_key(shared_secret, salt)
     assert isinstance(encryption_key, bytes)
     assert len(encryption_key) == 32
 
@@ -175,6 +176,8 @@ def test_entire_flow():
     secret_1 = generate_shared_secret(private_1, public_2)
     secret_2 = generate_shared_secret(private_2, public_1)
 
+    salt = generate_key()
+    
     key_1 = derive_encryption_key(secret_1)
     key_2 = derive_encryption_key(secret_2)
 
