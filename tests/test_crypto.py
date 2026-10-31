@@ -132,6 +132,10 @@ def test_derive_encryption_key():
     assert isinstance(encryption_key, bytes)
     assert len(encryption_key) == 32
 
+def test_serialize_public_key():
+    private_key = generate_private_key()
+    public_key = generate_public_key(private_key)
+
 def test_entire_flow():
     private_1 = generate_private_key()
     public_1 = generate_public_key(private_1)
