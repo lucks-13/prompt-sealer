@@ -65,8 +65,11 @@ def test_generate_signing_public_key():
 def test_valid_signature():
     private_key = generate_signing_private_key()
     public_key = generate_signing_public_key(private_key)
+    message = b"Hello Prompt Sealer"
+    signature = sign_data(private_key, message)
+    assert verify_signature(public_key, signature, message) is True
 
-    message = b
+
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
