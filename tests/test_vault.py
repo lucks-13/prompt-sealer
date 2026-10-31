@@ -78,3 +78,9 @@ def test_read_missing_vault():
     with pytest.raises(FileNotFoundError):
         read_vault(missing_path)
 
+def test_store_signing_key():
+    private_key = generate_signing_private_key()
+    stored_key = store_signing_key(private_key)
+    assert isinstance(stored_key, bytes)
+
+def test
