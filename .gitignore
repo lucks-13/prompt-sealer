@@ -4,3 +4,8 @@
 /.auto_git_push_config.json
 /.auto_git_push.log
 /setup-auto-git-push.ps1
+
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
