@@ -22,7 +22,8 @@ def generate_shared_secret(private_key : X25519PrivateKey, peer_public_key : X25
      return private_key.exchange(peer_public_key)
 
 def derive_encryption_key(shared_secret : bytes) -> bytes:
-     hkdf = HKDF(algorithm=)
+     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"prompt-sealer-encryption")
+     return hkdf.derive(shared_secret)
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
