@@ -147,4 +147,6 @@ def test_entire_flow():
 
     assert key_1 == key_2
     plaintext = b"Hello Prompt Sealer"
-    nonce, ciphertext = encrypt_data()
+    nonce, ciphertext = encrypt_data(plaintext, key_1)
+    decrypted_text = decrypt_data(ciphertext, key_2, nonce)
+    assert decrypted_text == plaintext
