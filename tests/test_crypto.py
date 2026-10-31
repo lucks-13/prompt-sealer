@@ -1,4 +1,4 @@
-from prompt_sealer.crypto import generate_key, generate_nonce
+from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data
 
 def test_generate_key_length():
     key = generate_key()
@@ -25,3 +25,5 @@ def test_generate_nonce_is_random():
     nonce1 = generate_nonce()
     nonce2 = generate_nonce()
     assert nonce1 != nonce2
+
+def test_encrypt_data_returns_
