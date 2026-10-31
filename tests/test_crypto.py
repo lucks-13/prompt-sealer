@@ -76,4 +76,11 @@ def test_encrypt_rejects_invalid_key_length():
     with pytest.raises(ValueError):
         encrypt_data(plaintext, key)
 
-def test_decrypt
+def test_decrypt_rejects_invalid_nonce_length():
+    key = generate_key()
+    invalid_nonce = b"short"
+    ciphertext = b"some ciphertext"
+    with pytest.raises(ValueError):
+        decrypt_data(ciphertext, key, invalid_nonce)
+
+def test_encrpt_reject

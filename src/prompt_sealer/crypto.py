@@ -20,7 +20,7 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
             raise ValueError("Encryption key must be exactly 32 bytes.")
-    if len(key) != 32:
+    if len(nonce) != 32:
             raise ValueError("Nonce must be exactly 32 bytes.")
     aesgcm = AESGCM(key)
     plaintext = aesgcm.decrypt(nonce,ciphertext, None)
