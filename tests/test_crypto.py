@@ -94,3 +94,7 @@ def test_encrypt_decrypt_empty_plaintext():
     nonce, ciphertext = encrypt_data(plaintext, key)
     decrypted = decrypt_data(ciphertext, key, nonce)
     assert decrypted == plaintext
+
+def test_encrypt_generates_different_nonces():
+    key = generate_key()
+    
