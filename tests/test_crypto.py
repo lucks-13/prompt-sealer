@@ -141,7 +141,16 @@ def test_serialize_public_key():
 
 def test_deserialize_public_key():
     private_key = generate_private_key()
-    public_key = gen
+    public_key = generate_public_key(private_key)
+    serialize = serialize_public_key(public_key)
+    deserialize = deserialize_public_key(serialize)
+    assert isinstance(deserialize, X25519PublicKey)
+    assert deserialize == public_key
+
+def test_invalid_length_in_deserialize():
+    with pytest.raises(ValueError):
+        deserialize_public_key(b"key")
+
 
 def test_entire_flow():
     private_1 = generate_private_key()
