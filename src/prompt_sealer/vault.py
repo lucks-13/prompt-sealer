@@ -5,6 +5,6 @@ def protect_data(data : bytes) -> bytes:
     return protect_data
 
 def unprotect_data(data : bytes) -> bytes:
-    result = win32crypt.CryptUnProtectData(data, "Prompt Sealer", None, None, None, 0)
+    result = win32crypt.CryptUnProtectData(data, None, None, None, 0)
     return result[1]
 

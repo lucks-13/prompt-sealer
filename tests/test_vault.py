@@ -10,4 +10,16 @@ def test_protected_data_differs_from_orginal():
     protected = protect_data(data)
     assert protected != data
 
+def test_unprotected_data():
+    data = b"Hello Prompt Sealer"
+    protected = protect_data(data)
+    decrypted = unprotect_data(protected)
+    assert decrypted == data
+
+def test_empty_unprotected_data():
+    data = b""
+    protected = protect_data(data)
+    decrypted = unprotect_data(protected)
+    assert decrypted == data
+
 
