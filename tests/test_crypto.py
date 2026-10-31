@@ -1,5 +1,5 @@
 import pytest
-from cryptography.exceptions import InvalidTag
+from cryptography.exceptions import InvalidTag, InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey, Ed25519PrivateKey
 from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data, generate_public_key, generate_private_key, generate_shared_secret, derive_encryption_key, serialize_public_key, deserialize_public_key, generate_signing_public_key, generate_signing_private_key
@@ -58,9 +58,11 @@ def test_generate_signing_private_key():
     assert isinstance(key, Ed25519PrivateKey)
 
 def test_generate_signing_public_key():
-    private_key = generate_private_key()
-    public_key = test_generate_signing_public_key(private_key)
+    private_key = generate_signing_private_key()
+    public_key = generate_signing_public_key(private_key)
     assert isinstance(public_key, Ed25519PublicKey)
+
+
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
