@@ -15,4 +15,6 @@ def unprotect_data(data : bytes) -> bytes:
         raise ValueError("Unable to decrypt protected data.") from None
 
 def store_private_key(private_key : X25519PrivateKey) -> bytes:
-    raw_key = private_key.private_bytes(encoding=En)
+    raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
+    return protect_data(raw_key)
+

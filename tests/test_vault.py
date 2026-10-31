@@ -1,5 +1,6 @@
 import pytest
-from prompt_sealer.vault import protect_data, unprotect_data
+from prompt_sealer.crypto import generate_private_key
+from prompt_sealer.vault import protect_data, unprotect_data, store_private_key
 
 def test_protect_data_returns_bytes():
     data = b"Hello Prompt Sealer"
@@ -26,5 +27,7 @@ def test_empty_unprotected_data():
 def test_unprotect_invalid_data():
     with pytest.raises(ValueError, match="Unable to decrypt protected data."):
         unprotect_data(b"Hello Prompt Sealer")
+
+def test_store_private_key_returns_bytes
 
 
