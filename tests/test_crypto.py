@@ -77,7 +77,12 @@ def test_modified_message_signature():
     modified_message = b"Hello Prompt Sealer, Modified"
     assert verify_signature(public_key, sign, modified_message) is False
 
-def test_
+def test_signature_with_wrong_public_key():
+    private_key = generate_signing_private_key()
+    wrong_private_key = generate_signing_private_key()
+
+    public_key = generate_signing_public_key(private_key)
+    wrong_public_key = generate_signing_public_key(private_key)
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
