@@ -37,4 +37,12 @@ def test_encrypted_data_is_different():
     key = generate_key()
     nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data()
+    ciphertext = encrypt_data(plaintext, key, nonce)
+    assert ciphertext != plaintext
+
+def test_encrypted_data_contains_authenication_tag():
+    key = generate_key()
+    nonce = generate_nonce()
+    plaintext = b"Hello Prompt Sealer"
+    ciphertext = encrypt_data(plaintext, key, nonce)
+    assert len(ciphertext) == len(plaintext)
