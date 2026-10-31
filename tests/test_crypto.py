@@ -84,6 +84,10 @@ def test_signature_with_wrong_public_key():
     public_key = generate_signing_public_key(private_key)
     wrong_public_key = generate_signing_public_key(private_key)
 
+    message = b"Hello Prompt Sealer"
+    sign = sign_data(private_key, message)
+    assert verify_signature(wrong_public_key, sign, message) is False
+
 def test_encrypt_data_returns_bytes():
     key = generate_key()
     plaintext = b"Hello Prompt Sealer"
