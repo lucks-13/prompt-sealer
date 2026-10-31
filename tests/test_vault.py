@@ -50,4 +50,9 @@ def test_original_key_and_loaded_key_matches():
     original_key = generate_private_key()
     stored_key = store_private_key(original_key)
     loaded_key = load_private_key(stored_key)
-    original_public = 
+    original_public = original_key.public_key()
+    loaded_public = loaded_key.public_key()
+    assert original_public == loaded_public
+
+def test_load_private_key_rejects_invalid_data():
+    with pytest.raises(ValueError)
