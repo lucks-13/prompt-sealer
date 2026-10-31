@@ -52,6 +52,9 @@ def test_generate_nonce_is_random():
     nonce2 = generate_nonce()
     assert nonce1 != nonce2
 
+def test_generate_signing_private_key():
+    
+
 def test_encrypt_data_returns_bytes():
     key = generate_key()
     plaintext = b"Hello Prompt Sealer"
