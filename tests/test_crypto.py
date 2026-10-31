@@ -83,4 +83,9 @@ def test_decrypt_rejects_invalid_nonce_length():
     with pytest.raises(ValueError):
         decrypt_data(ciphertext, key, invalid_nonce)
 
-def test_encrpt_reject
+def test_encrpt_rejects_non_bytes_plaintext():
+    key = generate_key()
+    with pytest.raises(TypeError):
+        encrypt_data("Hello Prompt Sealer", key)
+
+def 
