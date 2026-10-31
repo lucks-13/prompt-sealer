@@ -26,7 +26,8 @@ def derive_encryption_key(shared_secret : bytes) -> bytes:
      hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"prompt-sealer-encryption")
      return hkdf.derive(shared_secret)
 
-
+def serialize_public_key(public_key : X25519PublicKey) -> bytes:
+     return public_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
 
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
