@@ -30,16 +30,15 @@ def test_generate_nonce_is_random():
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
-    nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    nonce, ciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key)
+    assert isinstance(nonce, bytes)
     assert isinstance(ciphertext, bytes)
 
 def test_encrypted_data_is_different():
     key = generate_key()
-    nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data(plaintext, key, nonce)
+    nonceciphertext = encrypt_data(plaintext, key, nonce)
     assert ciphertext != plaintext
 
 def test_encrypted_data_contains_authenication_tag():
@@ -51,9 +50,8 @@ def test_encrypted_data_contains_authenication_tag():
 
 def test_encrypt_and_decrypt():
     key = generate_key()
-    nonce = generate_nonce()
     plaintext = b"Hello Prompt Sealer"
-    ciphertext = encrypt_data(plaintext, key, nonce)
+    nonce, ciphertext = encrypt_data(plaintext, key)
     decrypted = decrypt_data(ciphertext, key, nonce)
     assert decrypted == plaintext
 
@@ -65,6 +63,7 @@ def test_decryption_with_wrong_key():
     ciphertext = encrypt_data(plaintext, key, nonce)
     with pytest.raises(InvalidTag):
         decrypt_data(ciphertext, dummy_key, nonce)
+
 def test_decryption_with_tampered_ciphertext():
     key = generate_key()
     nonce = generate_nonce()

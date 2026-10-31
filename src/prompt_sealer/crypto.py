@@ -7,7 +7,7 @@ def generate_key() -> bytes:
 def generate_nonce() -> bytes:
     return secrets.token_bytes(12)
 
-def encrypt_data(plaintext: bytes, key: bytes, nonce: bytes) -> bytes:
+def encrypt_data(plaintext: bytes, key: bytes, nonce: bytes) -> tuple[bytes, bytes]:
     nonce = generate_nonce()
     aesgcm = AESGCM(key)
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
