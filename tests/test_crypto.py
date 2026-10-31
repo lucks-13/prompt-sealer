@@ -133,4 +133,13 @@ def test_derive_encryption_key():
     assert len(encryption_key) == 32
 
 def test_entire_flow():
+    private_1 = generate_private_key()
+    public_1 = generate_public_key(private_1)
+        
+    private_2 = generate_private_key()
+    public_2 = generate_public_key(private_2)
+    
+    secret_1 = generate_shared_secret(private_1, public_2)
+    secret_2 = generate_shared_secret(private_2, public_1)
+
     
