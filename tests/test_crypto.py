@@ -65,7 +65,12 @@ def test_generate_signing_public_key():
 def sign_data(private_key : Ed25519PublicKey, message : bytes) -> bytes:
     return private_key.sign(message)
 
-def verify_signature(public_)
+def verify_signature(public_key : Ed25519PublicKey, signature : bytes, message : bytes) -> bool:
+    try:
+        public_key.verify(signature, message)
+        return True
+    except InvalidSignature:
+        return False
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()
