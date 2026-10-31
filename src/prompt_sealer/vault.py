@@ -43,5 +43,6 @@ def load_signing_key(stored_key : bytes) -> Ed25519PrivateKey:
     raw_key = unprotect_data(stored_key)
     return Ed25519PrivateKey.from_private_bytes(raw_key)
 
-def 
+def create_vault() -> bytes:
+    
 
