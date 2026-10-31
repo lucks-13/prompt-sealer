@@ -55,4 +55,5 @@ def test_original_key_and_loaded_key_matches():
     assert original_public == loaded_public
 
 def test_load_private_key_rejects_invalid_data():
-    with pytest.raises(ValueError)
+    with pytest.raises(ValueError):
+        load_private_key(b"Hello Prompt Sealer")

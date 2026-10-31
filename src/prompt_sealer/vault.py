@@ -1,5 +1,6 @@
 import win32crypt
 import pywintypes
+from pathlib import Path
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
@@ -21,4 +22,7 @@ def store_private_key(private_key : X25519PrivateKey) -> bytes:
 def load_private_key(stored_key : bytes) -> X25519PrivateKey:
     raw_key = unprotect_data(stored_key)
     return X25519PrivateKey.from_private_bytes(raw_key)
+
+def save_vault(data : bytes, path : Path) -> None:
+    path.
 
