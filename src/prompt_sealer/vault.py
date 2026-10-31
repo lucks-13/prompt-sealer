@@ -3,7 +3,7 @@ import pywintypes
 from pathlib import Path
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
-from cryptography.hazmat.primitives.asymmetric.ed25519 im
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
@@ -32,3 +32,6 @@ def read_vault(path : Path) -> bytes:
     if not path.exists():
         raise FileNotFoundError("Vault file does not exist.")
     return path.read_bytes()
+
+def store_signing_key(private_key : Ed25519PrivateKey) -> bytes:
+    raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, )
