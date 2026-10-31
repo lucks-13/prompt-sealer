@@ -131,3 +131,6 @@ def test_derive_encryption_key():
     encryption_key = derive_encryption_key(shared_secret)
     assert isinstance(encryption_key, bytes)
     assert len(encryption_key) == 32
+
+def test_entire_flow():
+    
