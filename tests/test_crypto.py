@@ -97,4 +97,7 @@ def test_encrypt_decrypt_empty_plaintext():
 
 def test_encrypt_generates_different_nonces():
     key = generate_key()
-    
+    plaintext = b"Hello Prompt Sealer"
+    nonce1, ciphertext1 = encrypt_data(plaintext, key)
+    nonce2, ciphertext2 = encrypt_data(plaintext, key)
+    assert nonce1 != nonce2
