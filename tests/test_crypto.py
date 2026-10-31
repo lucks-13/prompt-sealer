@@ -9,3 +9,4 @@ def test_generate_key_is_random():
     key2 = generate_key()
     assert key1 != key2
 
+def test_generate_key_returns_byte
