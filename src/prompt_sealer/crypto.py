@@ -81,7 +81,10 @@ def link_pair(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> b
 def seal_record(data : bytes) -> bytes:
     return win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
 
-def rg
+def read_remote(key_data : bytes) -> X25519PublicKey:
+    if len(key_data) != 32:
+        raise ValueError("X25519 public key must be exactly 32 bytes.")
+    return X25519PublicKey.from_public_bytes(key_data)
 
 def expose_token(token : X25519PrivateKey) -> X25519PublicKey:
     return token.public_key()
