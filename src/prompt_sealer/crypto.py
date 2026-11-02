@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X2
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey, Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-def generate_key() -> bytes:
+def roll_seed() -> bytes:
     return secrets.token_bytes(32)
 
 def generate_nonce() -> bytes:
@@ -120,7 +120,7 @@ def unpack_peer(key_data : bytes) -> X25519PublicKey:
 
 def forge_lock(bridge : bytes, grain : bytes) -> bytes:
     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=grain, info=b"prompt-sealer-encryption")
-    return hkdf.derive(shared_secret)
+    return hkdf.derive(bridge)
 
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
