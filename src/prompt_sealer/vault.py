@@ -99,7 +99,7 @@ def unlock_record(blob : bytes) -> bytes:
         result = win32crypt.CryptUnprotectData(blob, None, None, None, 0)
         return result[1]
     except pywintypes.error:
-        raise
+        raise ValueError("Unable to decrypt protected data.") from None
 
 def write_cache(data : bytes, path : Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -112,3 +112,10 @@ def tuck_badge(private_key : Ed25519PrivateKey) -> bytes:
     key_data = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return seal_blob(key_data)
 
+def show_badge(stamp : Ed25519PrivateKey) -> Ed25519PublicKey:
+    return stamp.public_key()
+
+def fetch_store (location : Path) -> bytes:
+    if not location.exists():
+        raise FileNotFoundError("Vault file does not exist.")
+    return location.read_bytes()
