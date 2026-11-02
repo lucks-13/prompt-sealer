@@ -76,7 +76,8 @@ def seal_text(plain_data : bytes, key : bytes) -> tuple[bytes, bytes]:
         raise TypeError("Plain-Text must be bytes.")
     nonce = nonce_seed()
     cipher = AESGCM(key)
-    sealed_pack = cipher.
+    sealed_pack = cipher.encrypt(nonce, plain_data, None)
+    return nonce, sealed_pack
 
 def unpack_peer(key_data : bytes) -> X25519PublicKey:
     if len(key_data) != 32:
