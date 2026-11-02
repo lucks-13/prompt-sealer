@@ -79,7 +79,9 @@ def link_pair(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> b
     return private_key.exchange(remote_key)
 
 def seal_record(data : bytes) -> bytes:
-    return win32crypt.CryptProtectData()
+    return win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
+
+def rg
 
 def expose_token(token : X25519PrivateKey) -> X25519PublicKey:
     return token.public_key()
