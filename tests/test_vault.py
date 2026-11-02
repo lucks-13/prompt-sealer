@@ -51,7 +51,28 @@ def test_tuck_badge():
 
 def test_bring_badge():
     original_key = mint_stamp()
-    stored
+    stored_key = tuck_badge(original_key)
+    restored_key = bring_badge(stored_key)
+    assert isinstance(restored_key, Ed25519PrivateKey)
+    assert restored_key.public_key() == original_key.public_key()
+
+def test_write_and_fetch_store(tmp_path):
+    data = b"Hello Prompt Sealer"
+    vault_path = tmp_path / "vault.dat"
+    write_cache(data, vault_path)
+    loaded_data = fetch_store(vault_path)
+    assert loaded_data == data
+
+def test_write_cache_create_parent_dir(tmp_path):
+    data = b"Hello Prompt Sealer"
+    vault_path = tmp_path / "nested" / "folder" / "vault.dat"
+    write_cache(data, vault_path)
+    assert vault_path.exists()
+
+# def test_fetch_store_missing_vault():
+#     missing_path = Path("missing_vault.dat")
+#     with pytest.raises(FileNotFoundError):
+#         read_vault(missing_path)
 
 # def test_stored_private_key_is_protected():
 #     private_key = generate_private_key()
@@ -77,23 +98,11 @@ def test_bring_badge():
 #     with pytest.raises(ValueError):
 #         load_private_key(b"Hello Prompt Sealer")
 
-# def test_save_and_read_vault(tmp_path):
-#     data = b"Hello Prompt Sealer"
-#     vault_path = tmp_path / "vault.dat"
-#     save_vault(data, vault_path)
-#     loaded_data = read_vault(vault_path)
-#     assert loaded_data == data
 
-# def test_save_vault_create_parent_dir(tmp_path):
-#     data = b"Hello Prompt Sealer"
-#     vault_path = tmp_path / "nested" / "folder" / "vault.dat"
-#     save_vault(data, vault_path)
-#     assert vault_path.exists()
 
-# def test_read_missing_vault():
-#     missing_path = Path("missing_vault.dat")
-#     with pytest.raises(FileNotFoundError):
-#         read_vault(missing_path)
+
+
+
 
 # def test_store_signing_key():
 #     private_key = generate_signing_private_key()
