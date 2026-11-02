@@ -65,6 +65,9 @@ def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -
 def mint_pair() -> X25519PrivateKey:
      return X25519PrivateKey.generate()
 
+def roll_iv() -> bytes:
+    return secrets.token_bytes(12)
+
 def tuck_pair(private_key : X25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)

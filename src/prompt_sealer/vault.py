@@ -69,8 +69,8 @@ def unseal_text(sealed_pack : bytes, key : bytes, nonce : bytes) -> bytes:
         raise ValueError("Encryption key must be exactly 32 bytes.")
     if len(nonce) != 12:
         raise ValueError("Nonce must be exactly 12 bytes.")
-    cipher = 
-    
+    cipher = AESGCM(key)
+    return cipher.decrypt(nonce, sealed_pack, None)
 
 def stash_mark(private_key : Ed25519PrivateKey) -> bytes:
     key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
@@ -82,4 +82,8 @@ def stash_badge(private_key : Ed25519PrivateKey) -> bytes:
 
 def seal_blob(data : bytes) -> bytes:
     return win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
+
+def write_store(payload : bytes, location : Path) -> None:
+    location.parent.mkdir(parents=True, exist_ok=True)
+    location.write_bytes(payload)
 
