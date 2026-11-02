@@ -65,6 +65,12 @@ def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -
 def mint_pair() -> X25519PrivateKey:
      return X25519PrivateKey.generate()
 
+def tuck_pair(private_key : X25519PrivateKey) -> bytes:
+    raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
+    return protect_data(raw_key)
+
+
+
 def forge_lock(shared_secret : bytes, salt : bytes) -> bytes:
     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")
     return hkdf.derive(shared_secret)
