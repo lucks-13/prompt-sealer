@@ -61,7 +61,9 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     return nonce, ciphertext
 
 def stash_mark(private_key : Ed25519PrivateKey) -> bytes:
-     key = private_key.private_bytes(encoding)
+    key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
+    return protect_data(key)
+
 
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
