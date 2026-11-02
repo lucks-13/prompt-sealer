@@ -68,6 +68,9 @@ def mint_pair() -> X25519PrivateKey:
 def roll_iv() -> bytes:
     return secrets.token_bytes(12)
 
+def mark_payload(private_key : Ed25519PrivateKey, payload : bytes) -> bytes:
+    return private_key.sign(payload)
+
 def tuck_pair(private_key : X25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)
