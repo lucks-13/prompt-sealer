@@ -2,7 +2,7 @@ import pytest
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey, Ed25519PrivateKey
-from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data, generate_public_key, generate_private_key, generate_shared_secret, derive_encryption_key, serialize_public_key, deserialize_public_key, generate_signing_public_key, generate_signing_private_key, sign_data, verify_signature
+from prompt_sealer.crypto import generate_key, generate_nonce, encrypt_data, decrypt_data, generate_public_key, generate_private_key, generate_shared_secret, derive_encryption_key, serialize_public_key, deserialize_public_key, generate_signing_public_key, generate_signing_private_key, sign_data, check_mark
 
 def test_generate_public_key():
     private_key = generate_private_key()
@@ -67,7 +67,7 @@ def test_valid_signature():
     public_key = generate_signing_public_key(private_key)
     message = b"Hello Prompt Sealer"
     signature = sign_data(private_key, message)
-    assert verify_signature(public_key, signature, message) is True
+    assert check_mark(public_key, signature, message) is True
 
 def test_modified_message_signature():
     private_key = generate_signing_private_key()
@@ -75,7 +75,7 @@ def test_modified_message_signature():
     message = b"Hello Prompt Sealer"
     sign = sign_data(private_key, message)
     modified_message = b"Hello Prompt Sealer, Modified"
-    assert verify_signature(public_key, sign, modified_message) is False
+    assert check_mark(public_key, sign, modified_message) is False
 
 def test_signature_with_wrong_public_key():
     private_key = generate_signing_private_key()
@@ -86,7 +86,7 @@ def test_signature_with_wrong_public_key():
 
     message = b"Hello Prompt Sealer"
     sign = sign_data(private_key, message)
-    assert verify_signature(wrong_public_key, sign, message) is False
+    assert check_mark(wrong_public_key, sign, message) is False
 
 def test_encrypt_data_returns_bytes():
     key = generate_key()

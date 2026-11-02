@@ -30,11 +30,6 @@ def save_vault(data : bytes, path : Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(data)
 
-def read_vault(path : Path) -> bytes:
-    if not path.exists():
-        raise FileNotFoundError("Vault file does not exist.")
-    return path.read_bytes()
-
 def store_signing_key(private_key : Ed25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)
