@@ -44,6 +44,20 @@ def test_forge_lock():
     assert isinstance(encryption_key, bytes)
     assert len(encryption_key) == 32
 
+def test_pack_remote():
+    public_key = expose_token(mint_pair())
+    serialized = pack_remote(public_key)
+    assert isinstance(serialized, bytes)
+    assert len(serialized) == 32
+
+# def test_rea():
+#     private_key = generate_private_key()
+#     public_key = generate_public_key(private_key)
+#     serialize = serialize_public_key(public_key)
+#     deserialize = deserialize_public_key(serialize)
+#     assert isinstance(deserialize, X25519PublicKey)
+#     assert deserialize == public_key
+
 # def test_generate_key_length():
 #     key = generate_key()
 #     assert len(key) == 32
@@ -175,16 +189,6 @@ def test_forge_lock():
 #     nonce1, ciphertext1 = encrypt_data(plaintext, key)
 #     nonce2, ciphertext2 = encrypt_data(plaintext, key)
 #     assert nonce1 != nonce2
-
-
-
-# def test_deserialize_public_key():
-#     private_key = generate_private_key()
-#     public_key = generate_public_key(private_key)
-#     serialize = serialize_public_key(public_key)
-#     deserialize = deserialize_public_key(serialize)
-#     assert isinstance(deserialize, X25519PublicKey)
-#     assert deserialize == public_key
 
 # def test_invalid_length_in_deserialize():
 #     with pytest.raises(ValueError):
