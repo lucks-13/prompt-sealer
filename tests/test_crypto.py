@@ -20,10 +20,10 @@ def test_mint_pair():
 
 def test_expose_token():
     private_key = mint_pair()
-    public_key = generate_public_key(private_key)
+    public_key = expose_token(private_key)
     assert isinstance(public_key, X25519PublicKey)
 
-def test_generate_shared_secret():
+def test_blend_secret():
     private_1 = mint_pair()
     public_1 = expose_token(private_1)
     
@@ -37,12 +37,12 @@ def test_generate_shared_secret():
     assert len(secret_1) == 32
     assert len(secret_2) == 32
 
-# def test_forge_lock():
-#     shared_secret = roll_seed()
-#     salt = generate_key()
-#     encryption_key = derive_encryption_key(shared_secret, salt)
-#     assert isinstance(encryption_key, bytes)
-#     assert len(encryption_key) == 32
+def test_forge_lock():
+    shared_secret = roll_seed()
+    salt = roll_seed()
+    encryption_key = forge_lock(shared_secret, salt)
+    assert isinstance(encryption_key, bytes)
+    assert len(encryption_key) == 32
 
 # def test_generate_key_length():
 #     key = generate_key()
