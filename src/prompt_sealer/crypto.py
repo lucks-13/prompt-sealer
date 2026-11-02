@@ -36,7 +36,7 @@ def deserialize_public_key(key : bytes) -> X25519PublicKey:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
     return X25519PublicKey.from_public_bytes(key)
 
-def generate_signing_private_key() -> Ed25519PrivateKey:
+def reveal_badge(pric) -> Ed25519PrivateKey:
     return Ed25519PrivateKey.generate()
 
 def sign_data(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
