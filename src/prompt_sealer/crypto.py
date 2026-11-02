@@ -60,6 +60,9 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
     return nonce, ciphertext
 
+def stash_mark(private_key : Ed25519PrivateKey) -> bytes:
+     key = private_key.private_bytes(encoding)
+
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
             raise ValueError("Encryption key must be exactly 32 bytes.")
