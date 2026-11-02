@@ -10,6 +10,54 @@ from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 def roll_seed() -> bytes:
     return secrets.token_bytes(32)
 
+def nonce_seed() -> bytes:
+     return secrets.token_bytes(12)
+
+def mint_pair() -> X25519PrivateKey:
+     return X25519PrivateKey.generate()
+
+def expose_token(seed : X25519PrivateKey) -> X25519PublicKey:
+    return seed.public_key()
+
+def blend_secret(vault_key : X25519PrivateKey, peer : X25519PublicKey) -> bytes:
+    return vault_key.exchange(peer)
+
+def forge_lock(bridge : bytes, grain : bytes) -> bytes:
+    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=grain, info=b"prompt-sealer-encryption")
+    return hkdf.derive(bridge)
+
+def pack_remote(badge : X25519PublicKey) -> bytes:
+    return badge.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
+
+def read_remote(raw_key : bytes) -> X25519PublicKey:
+    if len(key_data) != 32:
+        raise ValueError("X25519 public key must be exactly 32 bytes.")
+    return X25519PublicKey.from_public_bytes(key_data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def generate_nonce() -> bytes:
     return secrets.token_bytes(12)
 
@@ -59,11 +107,9 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
     return nonce, ciphertext
 
-def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
-    return private_key.exchange(remote_key)
 
-def mint_pair() -> X25519PrivateKey:
-     return X25519PrivateKey.generate()
+
+
 
 def roll_iv() -> bytes:
     return secrets.token_bytes(12)
@@ -81,13 +127,8 @@ def link_pair(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> b
 def seal_record(data : bytes) -> bytes:
     return win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
 
-def read_remote(key_data : bytes) -> X25519PublicKey:
-    if len(key_data) != 32:
-        raise ValueError("X25519 public key must be exactly 32 bytes.")
-    return X25519PublicKey.from_public_bytes(key_data)
 
-def expose_token(token : X25519PrivateKey) -> X25519PublicKey:
-    return token.public_key()
+
 
 def mark_payload(private_key : Ed25519PrivateKey, payload : bytes) -> bytes:
     return private_key.sign(payload)
@@ -118,9 +159,7 @@ def unpack_peer(key_data : bytes) -> X25519PublicKey:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
     return X25519PublicKey.from_public_bytes(key_data)      
 
-def forge_lock(bridge : bytes, grain : bytes) -> bytes:
-    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=grain, info=b"prompt-sealer-encryption")
-    return hkdf.derive(bridge)
+
 
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
@@ -141,8 +180,7 @@ def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes
 def mint_stamp() -> Ed25519PrivateKey:
      return Ed25519PrivateKey.generate()
 
-def nonce_seed() -> bytes:
-     return secrets.token_bytes(12)
+
 
 
 
