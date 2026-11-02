@@ -90,3 +90,10 @@ def write_store(payload : bytes, location : Path) -> None:
 def tuck_away(private_key : X25519PrivateKey) -> bytes:
     key_bytes = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return seal_blob(key_bytes)
+
+def write_cache(data : bytes, path : Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+
+def pack_remote(public_key : X25519PublicKey) -> bytes:
+    return 
