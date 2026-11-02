@@ -7,6 +7,25 @@ from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X2
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey, Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
+def roll_seed() -> bytes:
+    return secrets.token_bytes(32)
+
+def nonce_seed() -> bytes:
+     return secrets.token_bytes(12)
+
+def mint_pair() -> X25519PrivateKey:
+     return X25519PrivateKey.generate()
+
+def expose_token(token : X25519PrivateKey) -> X25519PublicKey:
+    return token.public_key()
+
+def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
+    return private_key.exchange(remote_key)
+
+def forge_lock(shared_secret : bytes, salt : bytes) -> bytes:
+    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")
+    return hkdf.derive(shared_secret)
+
 def generate_key() -> bytes:
     return secrets.token_bytes(32)
 
@@ -59,11 +78,9 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
     return nonce, ciphertext
 
-def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
-    return private_key.exchange(remote_key)
 
-def mint_pair() -> X25519PrivateKey:
-     return X25519PrivateKey.generate()
+
+
 
 def roll_iv() -> bytes:
     return secrets.token_bytes(12)
@@ -86,8 +103,7 @@ def read_remote(key_data : bytes) -> X25519PublicKey:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
     return X25519PublicKey.from_public_bytes(key_data)
 
-def expose_token(token : X25519PrivateKey) -> X25519PublicKey:
-    return token.public_key()
+
 
 def mark_payload(private_key : Ed25519PrivateKey, payload : bytes) -> bytes:
     return private_key.sign(payload)
@@ -118,9 +134,7 @@ def unpack_peer(key_data : bytes) -> X25519PublicKey:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
     return X25519PublicKey.from_public_bytes(key_data)      
 
-def forge_lock(shared_secret : bytes, salt : bytes) -> bytes:
-    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")
-    return hkdf.derive(shared_secret)
+
 
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
@@ -138,14 +152,10 @@ def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes
     except InvalidSignature:
         return False
 
-def roll_seed() -> bytes:
-    return secrets.token_bytes(32)
-
 def mint_stamp() -> Ed25519PrivateKey:
      return Ed25519PrivateKey.generate()
 
-def nonce_seed() -> bytes:
-     return secrets.token_bytes(12)
+
 
 
 
