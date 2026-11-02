@@ -69,4 +69,11 @@ def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     plaintext = aesgcm.decrypt(nonce,ciphertext, None)
     return plaintext
 
-def check_mark(public_key : Ed25519PublicKey, )
+def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes) -> bool:
+    try:
+        public_key.verify(signature, message)
+        return True
+    except InvalidSignature:
+        return False
+
+          
