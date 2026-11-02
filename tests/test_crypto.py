@@ -14,31 +14,35 @@ def test_nonce_seed():
     assert isinstance(key, bytes)
     assert len(key) == 12
 
+def test_mint_pair():
+    private_key = mint_pair()
+    assert isinstance(private_key, X25519PrivateKey)
 
+def test_expose_token():
+    private_key = mint_pair()
+    public_key = generate_public_key(private_key)
+    assert isinstance(public_key, X25519PublicKey)
 
-
-# def test_generate_public_key():
-#     private_key = generate_private_key()
-#     public_key = generate_public_key(private_key)
-#     assert isinstance(public_key, X25519PublicKey)
-
-# def test_generate_private_key():
-#     private_key = generate_private_key()
-#     assert isinstance(private_key, X25519PrivateKey)
-
-# def test_generate_shared_secret():
-#     private_1 = generate_private_key()
-#     public_1 = generate_public_key(private_1)
+def test_generate_shared_secret():
+    private_1 = mint_pair()
+    public_1 = expose_token(private_1)
     
-#     private_2 = generate_private_key()
-#     public_2 = generate_public_key(private_2)
+    private_2 = mint_pair()
+    public_2 = expose_token(private_2)
 
-#     secret_1 = generate_shared_secret(private_1, public_2)
-#     secret_2 = generate_shared_secret(private_2, public_1)
+    secret_1 = blend_secret(private_1, public_2)
+    secret_2 = blend_secret(private_2, public_1)
     
-#     assert secret_1 == secret_2
-#     assert len(secret_1) == 32
-#     assert len(secret_2) == 32
+    assert secret_1 == secret_2
+    assert len(secret_1) == 32
+    assert len(secret_2) == 32
+
+# def test_forge_lock():
+#     shared_secret = roll_seed()
+#     salt = generate_key()
+#     encryption_key = derive_encryption_key(shared_secret, salt)
+#     assert isinstance(encryption_key, bytes)
+#     assert len(encryption_key) == 32
 
 # def test_generate_key_length():
 #     key = generate_key()
@@ -172,12 +176,7 @@ def test_nonce_seed():
 #     nonce2, ciphertext2 = encrypt_data(plaintext, key)
 #     assert nonce1 != nonce2
 
-# def test_derive_encryption_key():
-#     shared_secret = generate_key()
-#     salt = generate_key()
-#     encryption_key = derive_encryption_key(shared_secret, salt)
-#     assert isinstance(encryption_key, bytes)
-#     assert len(encryption_key) == 32
+
 
 # def test_deserialize_public_key():
 #     private_key = generate_private_key()
