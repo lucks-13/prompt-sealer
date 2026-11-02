@@ -62,7 +62,8 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
 def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
     return private_key.exchange(remote_key)
 
-def mint_pair() -> X
+def mint_pair() -> X25519PrivateKey:
+     return X25519PrivateKey.generate()
 
 def forge_lock(shared_secret : bytes, salt : bytes) -> bytes:
     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")

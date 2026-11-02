@@ -14,6 +14,11 @@ def pull_stamp(stored_key : bytes) -> Ed25519PrivateKey:
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
     return protected
+def expose_pair(private_key : X)
+
+def restore_pair(stored_key : bytes) -> X25519PrivateKey:
+    key = unprotect_data(stored_key)
+    return X25519PrivateKey.from_private_bytes(key)
 
 def fetch_cache(path : Path) -> bytes:
     if not path.exists():
