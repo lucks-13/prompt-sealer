@@ -42,5 +42,14 @@ def fetch_store (location : Path) -> bytes:
         raise FileNotFoundError("Vault file does not exist.")
     return location.read_bytes()
 
+def create_vault() -> bytes:
+    en_key = mint_pair()
+    sign_key = mint_stamp()
+    p_en_key = tuck_away(en_key)
+    p_sign_key = tuck_badge(sign_key)
+    vault_data = {
+        "encryption_key" : p_en_key.hex()
+    }
+
 def init_vault(location : Path) -> None:
     if location.exists()
