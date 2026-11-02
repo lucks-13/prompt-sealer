@@ -106,6 +106,15 @@ def seal_text(plain_data : bytes, key : bytes) -> tuple[bytes, bytes]:
     sealed_pack = cipher.encrypt(nonce, plain_data, None)
     return nonce, sealed_pack
 
+def craft_badge() -> Ed25519PrivateKey:
+    return Ed25519PrivateKey.generate()
+
+def store_piece(payload : bytes, target : Path) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(payload)
+
+
+
 def unpack_peer(key_data : bytes) -> X25519PublicKey:
     if len(key_data) != 32:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
