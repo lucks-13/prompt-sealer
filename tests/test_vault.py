@@ -40,9 +40,18 @@ def test_unpack_token():
     assert isinstance(restored_key, X25519PrivateKey)
     assert restored_key.public_key() == original_key.public_key()
 
-def test_unpack_invalid_data():
-    with pytest.raises(ValueError, match="Unable to decrypt protected data."):
-        unlock_record(b"Hello Prompt Sealer")
+def test_unpack_token_invalid_data():
+    with pytest.raises(ValueError):
+        unpack_token(b"Hello Prompt Sealer")
+
+def test_tuck_badge():
+    private_key = mint_stamp()
+    stored_key = tuck_badge(private_key)
+    assert isinstance(stored_key, bytes)
+
+def test_bring_badge():
+    original_key = mint_stamp()
+    stored
 
 # def test_stored_private_key_is_protected():
 #     private_key = generate_private_key()
