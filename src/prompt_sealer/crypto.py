@@ -13,6 +13,9 @@ def generate_key() -> bytes:
 def generate_nonce() -> bytes:
     return secrets.token_bytes(12)
 
+def stamp_note(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
+    return private_key.sign(message)
+
 def generate_private_key() -> X25519PrivateKey:
      return X25519PrivateKey.generate()
 

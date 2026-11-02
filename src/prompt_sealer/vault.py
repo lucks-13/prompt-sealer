@@ -7,6 +7,9 @@ from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from prompt_sealer.crypto import generate_signing_private_key, generate_private_key
 
+def pull_stamp(stored_key : bytes) -> Ed25519PrivateKey:
+    key = unprotect_data(stored_key)
+
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
     return protected
