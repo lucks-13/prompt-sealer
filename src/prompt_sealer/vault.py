@@ -48,8 +48,13 @@ def create_vault() -> bytes:
     p_en_key = tuck_away(en_key)
     p_sign_key = tuck_badge(sign_key)
     vault_data = {
-        "encryption_key" : p_en_key.hex()
+        "encryption_key" : p_en_key.hex(),
+        "signing_key" : p_sign_key.hex()
     }
+    return json.dumps(vault_data).encode("utf-8")
 
 def init_vault(location : Path) -> None:
-    if location.exists()
+    if location.exists():
+        raise FileExistsError("Vault already exists.")
+    vault_data = create_vault()
+    write_cache(vault_data, location)
