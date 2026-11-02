@@ -47,4 +47,6 @@ def stash_mark(private_key : Ed25519PrivateKey) -> bytes:
     key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(key)
 
-def seal_blob(data : bytes) -> bytes
+def seal_blob(data : bytes) -> bytes:
+    return win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
+

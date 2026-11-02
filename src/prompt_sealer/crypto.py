@@ -22,10 +22,6 @@ def generate_public_key(private_key : X25519PrivateKey) -> X25519PublicKey:
 def generate_shared_secret(private_key : X25519PrivateKey, peer_public_key : X25519PublicKey) -> bytes:
      return private_key.exchange(peer_public_key)
 
-def derive_encryption_key(shared_secret : bytes, salt : bytes) -> bytes:
-     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")
-     return hkdf.derive(shared_secret)
-
 def serialize_public_key(public_key : X25519PublicKey) -> bytes:
      return public_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
 
@@ -82,6 +78,9 @@ def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes
         return True
     except InvalidSignature:
         return False
+
+def mint_stamp() -> Ed25519PrivateKey:
+     return Ed25519PrivateKey.generate()
 
 def nonce_seed() -> bytes:
      return secrets.token_bytes(12)
