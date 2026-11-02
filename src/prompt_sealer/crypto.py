@@ -68,7 +68,15 @@ def mint_pair() -> X25519PrivateKey:
 def roll_iv() -> bytes:
     return secrets.token_bytes(12)
 
-def 
+def mint_token() -> Ed25519PrivateKey:
+    return Ed25519PrivateKey.generate()
+
+def restore_token(stored_key : bytes) -> X25519PrivateKey:
+    key_data = unprotect_data(stored_key)
+    return X25519PrivateKey.from_private_bytes(key_data)
+
+def expose_token(token : X25519PrivateKey) -> X25519PublicKey:
+    return token.public_key()
 
 def mark_payload(private_key : Ed25519PrivateKey, payload : bytes) -> bytes:
     return private_key.sign(payload)

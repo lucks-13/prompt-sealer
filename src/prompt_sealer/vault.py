@@ -87,6 +87,9 @@ def write_store(payload : bytes, location : Path) -> None:
     location.parent.mkdir(parents=True, exist_ok=True)
     location.write_bytes(payload)
 
+def hide_token(token : X25519PrivateKey) -> bytes:
+    return seal_blob(key)
+
 def tuck_away(private_key : X25519PrivateKey) -> bytes:
     key_bytes = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return seal_blob(key_bytes)
