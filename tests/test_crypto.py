@@ -117,21 +117,29 @@ def test_unseal_text():
     decrypted = unseal_text(ciphertext, key, nonce)
     assert decrypted == plaintext
 
-# def test_decryption_with_wrong_key():
-#     key = roll_seed()
-#     dummy_key = roll_seed()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = seal_(plaintext, key)
-#     with pytest.raises(InvalidTag):
-#         decrypt_data(ciphertext, dummy_key, nonce)
+def test_decryption_with_wrong_key():
+    key = roll_seed()
+    dummy_key = roll_seed()
+    plaintext = b"Hello Prompt Sealer"
+    nonce, ciphertext = seal_text(plaintext, key)
+    with pytest.raises(InvalidTag):
+        unseal_text(ciphertext, dummy_key, nonce)
 
-# def test_decryption_with_tampered_ciphertext():
-#     key = generate_key()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key)
-#     tamper = (ciphertext[:-1] + bytes([ciphertext[-1] ^ 1]))
-#     with pytest.raises(InvalidTag):
-#         decrypt_data(tamper, key, nonce)
+def test_unseal_with_tampered_ciphertext():
+    key = roll_seed()
+    plaintext = b"Hello Prompt Sealer"
+    nonce, ciphertext = seal_text(plaintext, key)
+    tamper = (ciphertext[:-1] + bytes([ciphertext[-1] ^ 1]))
+    with pytest.raises(InvalidTag):
+        unseal_text(tamper, key, nonce)
+
+def test_seal_text_rejects_non_bytes():
+    with pytest.raises(TypeError):
+        seal_text("key", roll_seed())
+
+def test_unseak_reject_invalid_key():
+    with pytest.raises(ValueError):
+        unseal_text(b"key",b"", non)
 
 # def test_encrypt_rejects_invalid_key_length():
 #     plaintext = b"Hello Prompt Sealer"
