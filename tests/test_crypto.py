@@ -73,29 +73,29 @@ def test_reveal_badge():
 def test_stamp_note():
     private_key = mint_stamp()
     sign = stamp_note(private_key,b"Hello Prompt Sealer")
-    assert isinstance(sign, Ed25519PublicKey)
+    assert isinstance(sign, bytes)
 
-# def test_valid_signature():
-#     private_key = generate_signing_private_key()
-#     public_key = generate_signing_public_key(private_key)
-#     message = b"Hello Prompt Sealer"
-#     signature = sign_data(private_key, message)
-#     assert check_mark(public_key, signature, message) is True
+def test_valid_signature():
+    private_key = mint_stamp()
+    public_key = reveal_badge(private_key)
+    message = b"Hello Prompt Sealer"
+    signature = stamp_note(private_key, message)
+    assert check_mark(public_key, signature, message) is True
 
-# def test_modified_message_signature():
-#     private_key = generate_signing_private_key()
-#     public_key  = generate_signing_public_key(private_key)
-#     message = b"Hello Prompt Sealer"
-#     sign = sign_data(private_key, message)
-#     modified_message = b"Hello Prompt Sealer, Modified"
-#     assert check_mark(public_key, sign, modified_message) is False
+def test_modified_message_signature():
+    private_key = mint_stamp()
+    public_key  = reveal_badge(private_key)
+    message = b"Hello Prompt Sealer"
+    sign = stamp_note(private_key, message)
+    modified_message = b"Hello Prompt Sealer, Modified"
+    assert check_mark(public_key, sign, modified_message) is False
 
 # def test_signature_with_wrong_public_key():
-#     private_key = generate_signing_private_key()
-#     wrong_private_key = generate_signing_private_key()
+#     private_key = mint_stamp()
+#     wrong_private_key = mint_stamp()
 
-#     public_key = generate_signing_public_key(private_key)
-#     wrong_public_key = generate_signing_public_key(wrong_private_key)
+#     public_key = reveal_badge(private_key)
+#     wrong_public_key = reveal_badge(wrong_private_key)
 
 #     message = b"Hello Prompt Sealer"
 #     sign = sign_data(private_key, message)
