@@ -57,6 +57,19 @@ def test_read_remote():
     assert isinstance(deserialize, X25519PublicKey)
     assert deserialize == public_key
 
+def test_read_remote_reject_invalid_length():
+    with pytest.raises(ValueError):
+        read_remote(b"key")
+
+def test_mint_stamp():
+    key = mint_stamp()
+    assert isinstance(key, Ed25519PrivateKey)
+
+def test_reveal_badge():
+    private_key = mint_stamp()
+    public_key = reveal_badge(private_key)
+    assert isinstance(public_key, Ed25519PublicKey)
+
 # def test_generate_key_length():
 #     key = generate_key()
 #     assert len(key) == 32
@@ -80,14 +93,9 @@ def test_read_remote():
 #     nonce2 = generate_nonce()
 #     assert nonce1 != nonce2
 
-# def test_generate_signing_private_key():
-#     key = generate_signing_private_key()
-#     assert isinstance(key, Ed25519PrivateKey)
 
-# def test_generate_signing_public_key():
-#     private_key = generate_signing_private_key()
-#     public_key = generate_signing_public_key(private_key)
-#     assert isinstance(public_key, Ed25519PublicKey)
+
+
 
 # def test_valid_signature():
 #     private_key = generate_signing_private_key()
@@ -189,9 +197,7 @@ def test_read_remote():
 #     nonce2, ciphertext2 = encrypt_data(plaintext, key)
 #     assert nonce1 != nonce2
 
-# def test_invalid_length_in_deserialize():
-#     with pytest.raises(ValueError):
-#         deserialize_public_key(b"key")
+
 
 # def test_key_exchange_using_serialized_key():
 #     private_1 = generate_private_key()
