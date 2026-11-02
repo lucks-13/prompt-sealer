@@ -58,7 +58,7 @@ def open_blob(blob : bytes) -> bytes:
         result = win32crypt.CryptUnprotectData(blob, None, None, None, 0)
         return result[1]
     except pywintypes.error:
-        raise ValueError("Unable to ")
+        raise ValueError("Unable to decrypt protection data.") from None
 
 def load_signing_key(stored_key : bytes) -> Ed25519PrivateKey:
     raw_key = unprotect_data(stored_key)

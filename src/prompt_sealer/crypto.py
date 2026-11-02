@@ -69,6 +69,8 @@ def tuck_pair(private_key : X25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)
 
+def seal_text()
+
 def unpack_peer(key_data : bytes) -> X25519PublicKey:
     if len(key_data) != 32:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
