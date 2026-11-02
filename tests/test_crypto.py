@@ -156,66 +156,15 @@ def test_entire_flow():
     remote_2 = read_remote(pack_remote(public_2))
     
     secret_1 = blend_secret(private_1, remote_2)
-    secret_2 = generate_shared_secret(private_, remote_1)
+    secret_2 = blend_secret(private_2, remote_1)
 
-    salt = generate_key()
+    salt = roll_seed()
 
-    key_1 = derive_encryption_key(secret_1, salt)
-    key_2 = derive_encryption_key(secret_2, salt)
+    key_1 = forge_lock(secret_1, salt)
+    key_2 = forge_lock(secret_2, salt)
 
     assert key_1 == key_2
     plaintext = b"Hello Prompt Sealer"
-    nonce, ciphertext = encrypt_data(plaintext, key_1)
-    decrypted_text = decrypt_data(ciphertext, key_2, nonce)
+    nonce, ciphertext = seal_text(plaintext, key_1)
+    decrypted_text = unseal_text(ciphertext, key_2, nonce)
     assert decrypted_text == plaintext
-
-
-
-# def test_encrypt_rejects_invalid_key_length():
-#     plaintext = b"Hello Prompt Sealer"
-#     key = b"short"
-#     with pytest.raises(ValueError):
-#         encrypt_data(plaintext, key)
-
-# def test_decrypt_rejects_invalid_nonce_length():
-#     key = generate_key()
-#     invalid_nonce = b"short"
-#     ciphertext = b"some ciphertext"
-#     with pytest.raises(ValueError):
-#         decrypt_data(ciphertext, key, invalid_nonce)
-
-# def test_encrpt_rejects_non_bytes_plaintext():
-#     key = generate_key()
-#     with pytest.raises(TypeError):
-#         encrypt_data("Hello Prompt Sealer", key)
-
-# def test_encrypt_decrypt_empty_plaintext():
-#     key = generate_key()
-#     plaintext = b""
-#     nonce, ciphertext = encrypt_data(plaintext, key)
-#     decrypted = decrypt_data(ciphertext, key, nonce)
-#     assert decrypted == plaintext
-
-# def test_encrypt_generates_different_nonces():
-#     key = generate_key()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce1, ciphertext1 = encrypt_data(plaintext, key)
-#     nonce2, ciphertext2 = encrypt_data(plaintext, key)
-#     assert nonce1 != nonce2
-
-
-
-# def test_key_exchange_using_serialized_key():
-#     private_1 = generate_private_key()
-#     public_1 = generate_public_key(private_1)
-            
-#     private_2 = generate_private_key()
-#     public_2 = generate_public_key(private_2)
-
-#     key_1 = deserialize_public_key(serialize_public_key(public_2))
-#     key_2 = deserialize_public_key(serialize_public_key(public_1))
-
-#     secret_1 = generate_shared_secret(private_1, key_1)
-#     secret_2 = generate_shared_secret(private_2, key_2)
-#     assert secret_1 == secret_2
-
