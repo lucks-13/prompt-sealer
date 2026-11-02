@@ -16,6 +16,9 @@ def generate_nonce() -> bytes:
 def stamp_note(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
     return private_key.sign(message)
 
+def reveal_stamp(private_key : Ed25519PrivateKey) -> Ed25519PrivateKey:
+     return private_key.public_key()
+
 def generate_private_key() -> X25519PrivateKey:
      return X25519PrivateKey.generate()
 
@@ -35,9 +38,6 @@ def deserialize_public_key(key : bytes) -> X25519PublicKey:
 
 def generate_signing_private_key() -> Ed25519PrivateKey:
     return Ed25519PrivateKey.generate()
-
-def generate_signing_public_key(private_key : Ed25519PrivateKey) -> Ed25519PublicKey:
-    return private_key.public_key()
 
 def sign_data(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
     return private_key.sign(message)
@@ -61,6 +61,8 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
 
 def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
     return private_key.exchange(remote_key)
+
+def mint_pair() -> X
 
 def forge_lock(shared_secret : bytes, salt : bytes) -> bytes:
     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")

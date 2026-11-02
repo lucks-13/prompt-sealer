@@ -9,6 +9,7 @@ from prompt_sealer.crypto import generate_signing_private_key, generate_private_
 
 def pull_stamp(stored_key : bytes) -> Ed25519PrivateKey:
     key = unprotect_data(stored_key)
+    return Ed25519PrivateKey.from_private_bytes(key)
 
 def protect_data(data : bytes) -> bytes:
     protected = win32crypt.CryptProtectData(data, "Prompt Sealer", None, None, None, 0)
