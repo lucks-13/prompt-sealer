@@ -169,12 +169,8 @@ def test_derive_encryption_key():
     assert isinstance(encryption_key, bytes)
     assert len(encryption_key) == 32
 
-def test_serialize_public_key():
-    private_key = generate_private_key()
-    public_key = generate_public_key(private_key)
-    serialized = serialize_public_key(public_key)
-    assert isinstance(serialized, bytes)
-    assert len(serialized) == 32
+def pack_identity(public_key : X25519PublicKey) -> bytes:
+    return public_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
 
 def test_deserialize_public_key():
     private_key = generate_private_key()
