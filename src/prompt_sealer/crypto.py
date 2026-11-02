@@ -64,6 +64,8 @@ def stash_mark(private_key : Ed25519PrivateKey) -> bytes:
     key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(key)
 
+def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
+    return private_key.exchange(remote_key)
 
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
