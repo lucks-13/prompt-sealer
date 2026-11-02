@@ -137,9 +137,39 @@ def test_seal_text_rejects_non_bytes():
     with pytest.raises(TypeError):
         seal_text("key", roll_seed())
 
-def test_unseak_reject_invalid_key():
+def test_unseal_reject_invalid_key():
     with pytest.raises(ValueError):
-        unseal_text(b"key",b"", non)
+        unseal_text(b"ciphertext", b"short", nonce_seed())
+
+def test_unseal_reject_invalid_nonce():
+    with pytest.raises(ValueError):
+        unseal_text(b"ciphertext", roll_seed(), b"short")
+
+def test_entire_flow():
+    private_1 = mint_pair()
+    public_1 = expose_token(private_1)
+        
+    private_2 = mint_pair()
+    public_2 = expose_token(private_2)
+
+    remote_1 = read_remote(pack_remote(public_1))
+    remote_2 = read_remote(pack_remote(public_2))
+    
+    secret_1 = blend_secret(private_1, remote_2)
+    secret_2 = generate_shared_secret(private_, remote_1)
+
+    salt = generate_key()
+
+    key_1 = derive_encryption_key(secret_1, salt)
+    key_2 = derive_encryption_key(secret_2, salt)
+
+    assert key_1 == key_2
+    plaintext = b"Hello Prompt Sealer"
+    nonce, ciphertext = encrypt_data(plaintext, key_1)
+    decrypted_text = decrypt_data(ciphertext, key_2, nonce)
+    assert decrypted_text == plaintext
+
+
 
 # def test_encrypt_rejects_invalid_key_length():
 #     plaintext = b"Hello Prompt Sealer"
@@ -188,25 +218,4 @@ def test_unseak_reject_invalid_key():
 #     secret_1 = generate_shared_secret(private_1, key_1)
 #     secret_2 = generate_shared_secret(private_2, key_2)
 #     assert secret_1 == secret_2
-
-# def test_entire_flow():
-#     private_1 = generate_private_key()
-#     public_1 = generate_public_key(private_1)
-        
-#     private_2 = generate_private_key()
-#     public_2 = generate_public_key(private_2)
-    
-#     secret_1 = generate_shared_secret(private_1, public_2)
-#     secret_2 = generate_shared_secret(private_2, public_1)
-
-#     salt = generate_key()
-
-#     key_1 = derive_encryption_key(secret_1, salt)
-#     key_2 = derive_encryption_key(secret_2, salt)
-
-#     assert key_1 == key_2
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key_1)
-#     decrypted_text = decrypt_data(ciphertext, key_2, nonce)
-#     assert decrypted_text == plaintext
 
