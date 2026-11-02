@@ -63,6 +63,10 @@ def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
 def blend_secret(private_key : X25519PrivateKey, remote_key : X25519PublicKey) -> bytes:
     return private_key.exchange(remote_key)
 
+def forge_lock(shared_secret : bytes, salt : bytes) -> bytes:
+    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=salt, info=b"prompt-sealer-encryption")
+    return hkdf.derive(shared_secret)
+
 def decrypt_data(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     if len(key) != 32:
             raise ValueError("Encryption key must be exactly 32 bytes.")

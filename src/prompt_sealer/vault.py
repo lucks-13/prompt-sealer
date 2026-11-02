@@ -46,3 +46,5 @@ def load_signing_key(stored_key : bytes) -> Ed25519PrivateKey:
 def stash_mark(private_key : Ed25519PrivateKey) -> bytes:
     key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(key)
+
+def seal_blob(data : bytes) -> bytes
