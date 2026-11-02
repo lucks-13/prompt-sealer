@@ -76,4 +76,9 @@ def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes
     except InvalidSignature:
         return False
 
+def nonce_seed() -> bytes:
+     return secrets.token_bytes(12)
+
+
+
           

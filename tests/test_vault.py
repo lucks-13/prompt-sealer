@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 from prompt_sealer.crypto import generate_private_key, generate_signing_private_key
-from prompt_sealer.vault import protect_data, unprotect_data, store_private_key, load_private_key, save_vault, read_vault, store_signing_key, load_signing_key
+from prompt_sealer.vault import protect_data, unprotect_data, store_private_key, load_private_key, save_vault, store_signing_key, load_signing_key,vault_peek
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
