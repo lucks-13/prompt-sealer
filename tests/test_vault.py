@@ -24,7 +24,7 @@ def test_empty_unlock_record():
     decrypted = unlock_record(protected)
     assert decrypted == data
 
-def test__invalid_data():
+def test_unlock_record_invalid_data():
     with pytest.raises(ValueError, match="Unable to decrypt protected data."):
         unlock_record(b"Hello Prompt Sealer")
 
@@ -32,6 +32,17 @@ def test_tuck_away():
     private_key = mint_pair()
     stored_key = tuck_away(private_key)
     assert isinstance(stored_key, bytes)
+
+def test_unpack_token():
+    original_key = mint_pair()
+    stored_key = tuck_away(original_key)
+    restored_key = unpack_token(stored_key)
+    assert isinstance(restored_key, X25519PrivateKey)
+    assert restored_key.public_key() == original_key.public_key()
+
+def test_unpack_invalid_data():
+    with pytest.raises(ValueError, match="Unable to decrypt protected data."):
+        unlock_record(b"Hello Prompt Sealer")
 
 # def test_stored_private_key_is_protected():
 #     private_key = generate_private_key()
