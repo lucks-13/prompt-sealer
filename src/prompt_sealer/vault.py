@@ -96,4 +96,9 @@ def write_cache(data : bytes, path : Path) -> None:
     path.write_bytes(data)
 
 def pack_remote(public_key : X25519PublicKey) -> bytes:
-    return 
+    return public_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
+
+def tuck_badge(private_key : Ed25519PrivateKey) -> bytes:
+    key_data = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
+    return seal_blob(key_data)
+

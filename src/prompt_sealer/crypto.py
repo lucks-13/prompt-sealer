@@ -68,6 +68,8 @@ def mint_pair() -> X25519PrivateKey:
 def roll_iv() -> bytes:
     return secrets.token_bytes(12)
 
+def 
+
 def mark_payload(private_key : Ed25519PrivateKey, payload : bytes) -> bytes:
     return private_key.sign(payload)
 
