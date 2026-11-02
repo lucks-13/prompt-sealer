@@ -60,9 +60,9 @@ def open_blob(blob : bytes) -> bytes:
     except pywintypes.error:
         raise ValueError("Unable to decrypt protection data.") from None
 
-def load_signing_key(stored_key : bytes) -> Ed25519PrivateKey:
-    raw_key = unprotect_data(stored_key)
-    return Ed25519PrivateKey.from_private_bytes(raw_key)
+def fetch_badge(stored_key : bytes) -> Ed25519PrivateKey:
+    key_bytes = unprotect_data(stored_key)
+    return Ed25519PrivateKey.from_private_bytes(key_bytes)
 
 def unseal_text(sealed_pack : bytes, key : bytes, nonce : bytes) -> bytes:
     if len(key) != 32:
