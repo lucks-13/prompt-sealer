@@ -43,8 +43,13 @@ def generate_signing_public_key(private_key : Ed25519PrivateKey) -> Ed25519Publi
 def sign_data(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
     return private_key.sign(message)
 
-
-
+def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes) -> bool:
+    try:
+        public_key.verify(signature, message)
+        return True
+    except InvalidSignature:
+         return False
+    
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
         raise ValueError("Encryption key must be exactly 32 bytes.")
