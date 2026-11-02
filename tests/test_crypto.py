@@ -50,13 +50,12 @@ def test_pack_remote():
     assert isinstance(serialized, bytes)
     assert len(serialized) == 32
 
-# def test_rea():
-#     private_key = generate_private_key()
-#     public_key = generate_public_key(private_key)
-#     serialize = serialize_public_key(public_key)
-#     deserialize = deserialize_public_key(serialize)
-#     assert isinstance(deserialize, X25519PublicKey)
-#     assert deserialize == public_key
+def test_read_remote():
+    public_key = expose_token(mint_pair())
+    serialize = pack_remote(public_key)
+    deserialize = read_remote(serialize)
+    assert isinstance(deserialize, X25519PublicKey)
+    assert deserialize == public_key
 
 # def test_generate_key_length():
 #     key = generate_key()
