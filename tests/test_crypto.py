@@ -90,48 +90,38 @@ def test_modified_message_signature():
     modified_message = b"Hello Prompt Sealer, Modified"
     assert check_mark(public_key, sign, modified_message) is False
 
-# def test_signature_with_wrong_public_key():
-#     private_key = mint_stamp()
-#     wrong_private_key = mint_stamp()
+def test_signature_with_wrong_public_key():
+    private_key = mint_stamp()
+    wrong_private_key = mint_stamp()
 
-#     public_key = reveal_badge(private_key)
-#     wrong_public_key = reveal_badge(wrong_private_key)
+    public_key = reveal_badge(private_key)
+    wrong_public_key = reveal_badge(wrong_private_key)
 
-#     message = b"Hello Prompt Sealer"
-#     sign = sign_data(private_key, message)
-#     assert check_mark(wrong_public_key, sign, message) is False
+    message = b"Hello Prompt Sealer"
+    sign = stamp_note(private_key, message)
+    assert check_mark(wrong_public_key, sign, message) is False
 
-# def test_encrypt_data_returns_bytes():
-#     key = generate_key()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key)
-#     assert isinstance(nonce, bytes)
-#     assert isinstance(ciphertext, bytes)
+def test_seal_test():
+    key = roll_seed()
+    plaintext = b"Hello Prompt Sealer"
+    nonce, ciphertext = seal_text(plaintext, key)
+    assert isinstance(nonce, bytes)
+    assert isinstance(ciphertext, bytes)
+    assert len(nonce) == 12
+    assert len(ciphertext) == len(plaintext) + 16
 
-# def test_encrypted_data_is_different():
-#     key = generate_key()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key)
-#     assert ciphertext != plaintext
-
-# def test_encrypted_data_contains_authenication_tag():
-#     key = generate_key()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key)
-#     assert len(ciphertext) == len(plaintext) + 16
-
-# def test_encrypt_and_decrypt():
-#     key = generate_key()
-#     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key)
-#     decrypted = decrypt_data(ciphertext, key, nonce)
-#     assert decrypted == plaintext
+def test_unseal_text():
+    key = roll_seed()
+    plaintext = b"Hello Prompt Sealer"
+    nonce, ciphertext = seal_text(plaintext, key)
+    decrypted = unseal_text(ciphertext, key, nonce)
+    assert decrypted == plaintext
 
 # def test_decryption_with_wrong_key():
-#     key = generate_key()
-#     dummy_key = generate_key()
+#     key = roll_seed()
+#     dummy_key = roll_seed()
 #     plaintext = b"Hello Prompt Sealer"
-#     nonce, ciphertext = encrypt_data(plaintext, key)
+#     nonce, ciphertext = seal_(plaintext, key)
 #     with pytest.raises(InvalidTag):
 #         decrypt_data(ciphertext, dummy_key, nonce)
 
