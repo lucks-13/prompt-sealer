@@ -1,6 +1,8 @@
 import win32crypt
 import pywintypes
 from pathlib import Path
+
+from prompt_sealer.crypto
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -39,3 +41,6 @@ def fetch_store (location : Path) -> bytes:
     if not location.exists():
         raise FileNotFoundError("Vault file does not exist.")
     return location.read_bytes()
+
+def init_vault(location : Path) -> None:
+    if location.exists()
