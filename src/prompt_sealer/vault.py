@@ -30,6 +30,13 @@ def fetch_cache(path : Path) -> bytes:
         raise FileExistsError("Vault file does not exist.")
     return path.read_bytes()
 
+def tag_message(stamp : Ed25519PrivateKey, note : bytes) -> bytes:
+    return stamp.sign(note)
+
+def bring_badge(blob : bytes) -> Ed25519PrivateKey:
+    key_data = unlock_record(blob)
+    return Ed25519PrivateKey.from_private_bytes(key_data)
+
 def unprotect_data(data : bytes) -> bytes:
     try:
         result = win32crypt.CryptUnprotectData(data, None, None, None, 0)
@@ -52,6 +59,8 @@ def save_vault(data : bytes, path : Path) -> None:
 def store_signing_key(private_key : Ed25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)
+
+def audit_mark
 
 def open_blob(blob : bytes) -> bytes:
     try:
