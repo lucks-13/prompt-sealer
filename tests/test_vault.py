@@ -6,32 +6,32 @@ from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
-# def test_seal_blob():
-#     data = b"Hello Prompt Sealer"
-#     protected = seal_blob(data)
-#     assert isinstance(protected, bytes)
-#     assert protected != data
+def test_seal_blob():
+    data = b"Hello Prompt Sealer"
+    protected = seal_blob(data)
+    assert isinstance(protected, bytes)
+    assert protected != data
 
-# def test_unprotected_data():
-#     data = b"Hello Prompt Sealer"
-#     protected = protect_data(data)
-#     decrypted = unprotect_data(protected)
-#     assert decrypted == data
+def test_unlock_record():
+    data = b"Hello Prompt Sealer"
+    protected = seal_blob(data)
+    decrypted = unlock_record(protected)
+    assert decrypted == data
 
-# def test_empty_unprotected_data():
-#     data = b""
-#     protected = protect_data(data)
-#     decrypted = unprotect_data(protected)
-#     assert decrypted == data
+def test_empty_unlock_record():
+    data = b""
+    protected = seal_blob(data)
+    decrypted = unlock_record(protected)
+    assert decrypted == data
 
-# def test_unprotect_invalid_data():
-#     with pytest.raises(ValueError, match="Unable to decrypt protected data."):
-#         unprotect_data(b"Hello Prompt Sealer")
+def test__invalid_data():
+    with pytest.raises(ValueError, match="Unable to decrypt protected data."):
+        unlock_record(b"Hello Prompt Sealer")
 
-# def test_store_private_key_returns_bytes():
-#     private_key = generate_private_key()
-#     stored_key = store_private_key(private_key)
-#     assert isinstance(stored_key, bytes)
+def test_tuck_away():
+    private_key = mint_pair()
+    stored_key = tuck_away(private_key)
+    assert isinstance(stored_key, bytes)
 
 # def test_stored_private_key_is_protected():
 #     private_key = generate_private_key()
