@@ -30,11 +30,35 @@ def pack_remote(badge : X25519PublicKey) -> bytes:
     return badge.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
 
 def read_remote(raw_key : bytes) -> X25519PublicKey:
-    if len(key_data) != 32:
+    if len(raw_key) != 32:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
-    return X25519PublicKey.from_public_bytes(key_data)
+    return X25519PublicKey.from_public_bytes(raw_key)
 
+def mint_stamp() -> Ed25519PrivateKey:
+     return Ed25519PrivateKey.generate()
 
+def reveal_badge(stamp_key : Ed25519PrivateKey) -> Ed25519PublicKey:
+    return stamp_key.public_key()
+
+def stamp_note(stamp_key : Ed25519PrivateKey, note : bytes) -> bytes:
+    return stamp_key.sign(note)
+
+def check_mark(badge : Ed25519PublicKey, mark : bytes, note : bytes) -> bool:
+    try:
+        badge.verify(mark, note)
+        return True
+    except InvalidSignature:
+         return False
+
+def seal_text(raw_note : bytes, lock_key : bytes) -> tuple[bytes, bytes]:
+    if len(key) != 32:
+        raise ValueError("Encryption key must be exactly 32 bytes.")
+    if not isinstance(plain_data, bytes):
+        raise TypeError("Plain-Text must be bytes.")
+    nonce = nonce_seed()
+    cipher = AESGCM(key)
+    sealed_pack = cipher.encrypt(nonce, plain_data, None)
+    return nonce, sealed_pack
 
 
 
@@ -61,8 +85,7 @@ def read_remote(raw_key : bytes) -> X25519PublicKey:
 def generate_nonce() -> bytes:
     return secrets.token_bytes(12)
 
-def stamp_note(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
-    return private_key.sign(message)
+
 
 def reveal_stamp(private_key : Ed25519PrivateKey) -> Ed25519PrivateKey:
      return private_key.public_key()
@@ -84,18 +107,12 @@ def deserialize_public_key(key : bytes) -> X25519PublicKey:
         raise ValueError("X25519 public key must be exactly 32 bytes.")
     return X25519PublicKey.from_public_bytes(key)
 
-def reveal_badge(private_key : Ed25519PrivateKey) -> Ed25519PublicKey:
-    return private_key.public_key()
+
 
 def sign_data(private_key : Ed25519PrivateKey, message : bytes) -> bytes:
     return private_key.sign(message)
 
-def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes) -> bool:
-    try:
-        public_key.verify(signature, message)
-        return True
-    except InvalidSignature:
-         return False
+
     
 def encrypt_data(plaintext: bytes, key: bytes) -> tuple[bytes, bytes]:
     if len(key) != 32:
@@ -137,15 +154,7 @@ def tuck_pair(private_key : X25519PrivateKey) -> bytes:
     raw_key = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return protect_data(raw_key)
 
-def seal_text(plain_data : bytes, key : bytes) -> tuple[bytes, bytes]:
-    if len(key) != 32:
-        raise ValueError("Encryption key must be exactly 32 bytes.")
-    if not isinstance(plain_data, bytes):
-        raise TypeError("Plain-Text must be bytes.")
-    nonce = nonce_seed()
-    cipher = AESGCM(key)
-    sealed_pack = cipher.encrypt(nonce, plain_data, None)
-    return nonce, sealed_pack
+
 
 def craft_badge() -> Ed25519PrivateKey:
     return Ed25519PrivateKey.generate()
@@ -177,8 +186,6 @@ def check_mark(public_key : Ed25519PublicKey, signature : bytes, message : bytes
     except InvalidSignature:
         return False
 
-def mint_stamp() -> Ed25519PrivateKey:
-     return Ed25519PrivateKey.generate()
 
 
 
