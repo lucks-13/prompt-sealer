@@ -1,8 +1,8 @@
+import json
 import win32crypt
 import pywintypes
 from pathlib import Path
-
-from prompt_sealer.crypto
+from prompt_sealer.crypto import mint_pair, mint_stamp
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
