@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 from prompt_sealer.crypto import seal_text, unseal_text
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
 def read_prompt(location : Path) -> bytes:
     if not location.exists():
@@ -10,6 +13,10 @@ def read_prompt(location : Path) -> bytes:
     if location.suffix.lower() not in {".txt", ".md"}:
         raise ValueError("Prompt file must be .txt or .md")
     return location.read_bytes()
+
+def derive_prompt_key(vault_key : X25519PrivateKey) -> bytes:
+    shared = vault_key.exchange(vault_key.public_key())
+    return HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"prompt-se").derive(shared)
 
 def seal_prompt(prompt : bytes, key : bytes) -> bytes:
     nonce, ciphertext = seal_text(prompt, key)
