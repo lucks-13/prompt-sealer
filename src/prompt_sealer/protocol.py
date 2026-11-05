@@ -100,7 +100,7 @@ def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Pat
         raise ValueError("Authorization has expired.")
     if not hmac.compare_digest(code_b.strip().upper(), entry["code_b"]):
         raise ValueError("Invalid access code.")
-    key = derive_prompt_key(machine_secret, bytes.fromhex(field_id))
+    key = derive_prompt_key(machine_secret, bytes.fromhex(file_id))
     plaintext = unseal_prompt(source.read_bytes(), key)
     entry["used"] = True
     state_path.write_bytes(json.dumps(state, separators=(",",":")).encode("utf-8"))

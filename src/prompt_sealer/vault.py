@@ -23,6 +23,8 @@ def tuck_away(vault_key : X25519PrivateKey) -> bytes:
 
 def unpack_token(saved_key : bytes) -> X25519PrivateKey:
     key = unlock_record(saved_key)
+    if len(key) != 32:
+        raise ValueError("Invalid encryption key.")
     return X25519PrivateKey.from_private_bytes(key)
 
 def tuck_badge(private_key : Ed25519PrivateKey) -> bytes:
@@ -31,6 +33,8 @@ def tuck_badge(private_key : Ed25519PrivateKey) -> bytes:
 
 def bring_badge(blob : bytes) -> Ed25519PrivateKey:
     key_data = unlock_record(blob)
+    if len(key_data) != 32:
+        raise ValueError("Invalid signing key.")
     return Ed25519PrivateKey.from_private_bytes(key_data)
 
 def write_cache(data : bytes, path : Path) -> None:

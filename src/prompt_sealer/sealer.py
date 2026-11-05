@@ -28,7 +28,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
     extra = json.dumps(
         {
             "version" : 1,
-            "field_id" : file_id.hex(),
+            "file_id" : file_id.hex(),
             "expires" : expires,
             "challenge" : challenge.hex(),
         },
