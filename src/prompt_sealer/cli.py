@@ -64,7 +64,13 @@ def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt fil
         raise typer.Exit(code=1)
 
 @app.command()
-def redeem_prompt(source : Path = typer.Argument())
+def redeem_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_b : str = typer.Argument(..., help="Access code B."), dest : Path = typer.Argument(..., help="Output plaintext prompt file.")):
+    try:
+        _, _, machine_secret = open_vault(vault_path)
+        prompt = redeem(source, machine_secret, code_b, state_path)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(prompt)
+        typer.echo(f" ")
 
 @app.command()
 def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault without confirmation.")):
