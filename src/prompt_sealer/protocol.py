@@ -72,7 +72,11 @@ def authorize(source : Path, machine_secret : bytes, code_a : str, state_path : 
     code_b = make_code_b()
     state = {}
     if state_path.exists():
-        state = json.loads(state_path.read_bytes().decode("utf-8"))
+        try:
+            state = json.loads(state_path.read_bytes().decode("utf-8"))
+            if not isinstance(state,dict):
+                raise ValueError
+        except (UnicodeDecodeError, json.JSONDecodeError, TypeError, V)
     state[file_id.hex()] = {
         "code_b" : code_b,
         "expires" : record["expires"],
