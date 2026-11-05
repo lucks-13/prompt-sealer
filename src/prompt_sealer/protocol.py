@@ -39,4 +39,4 @@ def read_sealed(source : Path) -> dict:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
 
-def make_code_a
+def make_code_a()
