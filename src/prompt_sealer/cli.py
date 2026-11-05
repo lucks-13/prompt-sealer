@@ -36,7 +36,17 @@ def check():
 def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest : Path = typer.Argument(..., help="Output sealed file.")):
     try:
         en_key, _ = open_vault(vault_path)
-        p_key = derive_prompt_key
+        p_key = derive_prompt_key(en_key)
+        seal_file(source, dest, p_key)
+        typer.echo(f"Prompt sealed : {dest}")
+    except FileNotFoundError as error:
+        typer.echo(str(error))
+        raise typer.Exit(code=1)
+    except ValueError as error:
+        typer.echo(str(error))
+        raise typer.Exit(code=1)
+
+def unseal(source : Path = typer.Argument(..., help="Sealed prompt file."), dest : P)
 
 if __name__ == "__main__":
     app()
