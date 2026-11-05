@@ -50,13 +50,13 @@ def test_invalid_vault(tmp_path):
         open_vault(path)
 
 def test_vault_protection_and_cleanup(tmp_path):
-    
-
-def test_vault_destruction(tmp_path):
     path = tmp_path / "vault.dat"
     init_vault(path)
-    assert path.exists()
+    og = path.read_bytes()
+    with pytest.raises(FileExistsError):
+        init_vault(path)
+    assert path.read_bytes() == og
     destroy_vault(path)
     assert not path.exists()
     with pytest.raises(FileNotFoundError):
-        destroy_vault(path)
+        de
