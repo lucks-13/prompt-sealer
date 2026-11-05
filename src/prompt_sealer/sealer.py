@@ -17,4 +17,5 @@ def seal_prompt(prompt : bytes, key : bytes) -> bytes:
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
     }
-    return json.dumps(record).
+    return json.dumps(record).encode("utf-8")
+
