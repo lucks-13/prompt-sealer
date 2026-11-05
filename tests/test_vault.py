@@ -100,4 +100,8 @@ def test_open_vault(tmp_path):
     assert isinstance(en_key, X25519PrivateKey)
     assert isinstance(sg_key, Ed25519PrivateKey)
 
-def test_open_invalid_vault(tmp)
+def test_open_invalid_vault(tmp_path):
+    path = tmp_path / "vault.dat"
+    path.write_bytes(b"Invalid Vault")
+    with pytest.raises(ValueError):
+        open_vault(path)
