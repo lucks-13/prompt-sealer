@@ -46,4 +46,17 @@ def make_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes) -> s
 
 def verify_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes, code : str) -> bool:
     excepted = make_code_a(machine_secret, file_id, challenge)
-    return code.strip().upper() == ex
+    return code.strip().upper() == excepted
+
+def make_code_b(machine_secret : bytes, file_id : bytes, challenge : bytes) -> str:
+    proof = forge_lock(machine_secret, file_id, b"prompt-sealer-code-b")
+    data = proof + challenge
+    return hashlib.sha256(data).hexdigest()[:12].upper()
+
+def check_expire(expires : int) -> bool:
+    return int(time.time()) < expires
+
+def authorize(source : Path, machine_secret : bytes, code_a : str) -> str:
+    record = read_sealed(source)
+    file_id = bytes.fromhex(record["file_id"])
+    challenge = 
