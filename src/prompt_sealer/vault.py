@@ -2,7 +2,7 @@ import json
 import win32crypt
 import pywintypes
 from pathlib import Path
-from prompt_sealer.crypto import mint_pair, mint_stamp
+from prompt_sealer.crypto import mint_pair, mint_stamp, roll_seed
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -47,12 +47,15 @@ def fetch_store (location : Path) -> bytes:
 def create_vault() -> bytes:
     en_key = mint_pair()
     sign_key = mint_stamp()
+    machine_secret = roll_seed()
     p_en_key = tuck_away(en_key)
     p_sign_key = tuck_badge(sign_key)
+    p_machine_secret = seal_blob(machine_secret)
     vault_data = {
         "version" : 1,
         "encryption_key" : p_en_key.hex(),
-        "signing_key" : p_sign_key.hex()
+        "signing_key" : p_sign_key.hex(),
+        "machine_secret" : p_machine_secret.hex()
     }
     return json.dumps(vault_data).encode("utf-8")
 
@@ -67,7 +70,7 @@ def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey]:
         data = json.loads(fetch_store(location).decode("utf-8"))
         if not isinstance(data, dict):
             raise ValueError
-        if set(data) != {"version", "encryption_key", "signing_key"}:
+        if set(data) != {"version", "encryption_key", "signing_key", "machine_secre"}:
             raise ValueError
         if data["version"] != 1:
             raise ValueError
