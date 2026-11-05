@@ -59,7 +59,7 @@ def make_code_b() -> str:
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
-def authorize(source : Path, machine_secret : bytes, code_a : str) -> str:
+def authorize(source : Path, machine_secret : bytes, code_a : str, state_path : Path) -> str:
     record = read_sealed(source)
     file_id = bytes.fromhex(record["file_id"])
     challenge = bytes.fromhex(record["challenge"])
@@ -67,4 +67,15 @@ def authorize(source : Path, machine_secret : bytes, code_a : str) -> str:
         raise ValueError("Prompt file has expired.")
     if not verify_code_a(machine_secret, file_id, challenge, code_a):
         raise ValueError("Invalid access code.")
-    return make_code_b(machine_secret, file_id, challenge)
+    code_b = make_code_b()
+    state = {}
+    if state_path.exists():
+        state = json.loads(state_path.read_bytes().decode("utf-8"))
+    state[file_id.hex()] = {
+        "code_b" : code_b,
+        "expires" : record["expires"],
+        "used" : False,
+    }
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    state_path.write_bytes(json.dumps(state, separators=(",", ":")).encode())
+    return make_code_b
