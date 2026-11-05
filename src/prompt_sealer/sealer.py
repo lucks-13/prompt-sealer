@@ -19,3 +19,6 @@ def seal_prompt(prompt : bytes, key : bytes) -> bytes:
     }
     return json.dumps(record).encode("utf-8")
 
+def unseal_prompt(blob : bytes, key : bytes) -> bytes:
+    try:
+        record = json.loads(blob.decode("utf"))
