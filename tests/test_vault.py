@@ -39,6 +39,8 @@ def test_vault_creation_and_validation(tmp_path):
     assert check_vault(path) is True
     data = json.loads(fetch_store(path).decode("utf-8"))
     assert set(data) == {"encryption_key", "signing_key"}
+    en_key, sg_key = open_vault(path)
+    assert isinst
 
 def test_vault_loading(tmp_path):
     path = tmp_path / "vault.dat"
