@@ -80,3 +80,13 @@ def test_create_vault():
     data = json.loads(vault.decode("utf-8"))
     assert "encryption_key" in data
     assert "signing_key" in data
+
+def test_init_vault(tmp_path):
+    path = tmp_path / "vault.dat"
+    init_vault(path)
+    assert path.exists()
+
+def test_init_vault_no_overwrite(tmp_path):
+    path = tmp_path / "vault.dat"
+    path.write_bytes(b"Existing Data")
+    with pytest 
