@@ -56,7 +56,15 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
 @app.command()
 def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_a : str = typer.Argument(..., help="Access code A.")):
     try:
-        _, _, 
+        _, _, machine_secret = open_vault(vault_path)
+        code_b = authorize(source, machine_secret, code_a, state_path)
+        typer.exho(f"Access Code B : {code_b}")
+    except (FileNotFoundError, ValueError) as error:
+        typer.echo(str(error))
+        raise typer.Exit(code=1)
+
+@app.command()
+def redeem_prompt(source : Path = typer.Argument())
 
 @app.command()
 def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault without confirmation.")):
