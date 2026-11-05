@@ -65,3 +65,5 @@ def open_vault(location : Path) -> tuple[X25519PrivateKey, X25519PrivateKey]:
         en_key = bytes.fromhex(data["encryption_key"])
         sg_key = bytes.fromhex(data["signing_key"])
         return unpack_token(en_key), bring_badge(sg_key)
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        raise ValueError("Vault is invalid or cannot be unlocked.") from None
