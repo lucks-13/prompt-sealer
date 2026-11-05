@@ -12,4 +12,12 @@ def test_read_prompt_rejects_invalid(tmp_path):
     with pytest.raises(FileNotFoundError):
         read_prompt(missing)
     folder = tmp_path / "prompts"
-    folder
+    folder.mkdir()
+    with pytest.raises(ValueError):
+        read_prompt(folder)
+
+def test_read_prompt_rejects_unsupported_file(tmp_path):
+    path = tmp_path / "prompt.py"
+    path.write_bytes(b"print('hello')")
+    with pytest.raises(ValueError):
+        read_prompt(path)
