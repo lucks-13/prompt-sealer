@@ -58,4 +58,6 @@ def test_vault_destruction(tmp_path):
     init_vault(path)
     assert path.exists()
     destroy_vault(path)
-    asser
+    assert not path.exists()
+    with pytest.raises(FileNotFoundError):
+        destroy_vault(path)
