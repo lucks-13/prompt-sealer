@@ -33,7 +33,10 @@ def check():
         raise typer.Exit(code=1)
 
 @app.command()
-def seal():
+def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest : Path = typer.Argument(..., help="Output sealed file.")):
+    try:
+        en_key, _ = open_vault(vault_path)
+        p_key = derive_prompt_key
 
 if __name__ == "__main__":
     app()
