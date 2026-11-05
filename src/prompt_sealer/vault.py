@@ -65,18 +65,19 @@ def init_vault(location : Path) -> None:
     vault_data = create_vault()
     write_cache(vault_data, location)
 
-def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey]:
+def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey, bytes]:
     try:
         data = json.loads(fetch_store(location).decode("utf-8"))
         if not isinstance(data, dict):
             raise ValueError
-        if set(data) != {"version", "encryption_key", "signing_key", "machine_secre"}:
+        if set(data) != {"version", "encryption_key", "signing_key", "machine_secret"}:
             raise ValueError
         if data["version"] != 1:
             raise ValueError
         en_key = bytes.fromhex(data["encryption_key"])
         sg_key = bytes.fromhex(data["signing_key"])
-        return unpack_token(en_key), bring_badge(sg_key)
+        machine_secret = bytes.fromhex(data["machine_secret"])
+        return unpack_token(en_key), bring_badge(sg_key), unlock_record(machine_secret)
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Vault is invalid or cannot be unlocked.") from None
 

@@ -36,7 +36,7 @@ def check():
 @app.command()
 def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest : Path = typer.Argument(..., help="Output sealed file.")):
     try:
-        en_key, _ = open_vault(vault_path)
+        en_key, _, machine_secret = open_vault(vault_path)
         p_key = derive_prompt_key(en_key)
         seal_file(source, dest, p_key)
         typer.echo(f"Prompt sealed : {dest}")
