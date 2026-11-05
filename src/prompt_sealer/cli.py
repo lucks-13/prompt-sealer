@@ -63,7 +63,16 @@ def unseal(source : Path = typer.Argument(..., help="Sealed prompt file."), dest
 @app.command()
 def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault without confirmation.")):
     if not force:
-        confirmed = typer.confirm("Delete the prompt ")
+        confirmed = typer.confirm("Delete the prompt sealer vault ?")
+        if not confirmed:
+            typer.echo("Vault was not deleted.")
+            raise typer.Exit()
+        try:
+            destroy_vault(vault_path)
+            typer.echo("Vault destroyed.")
+        except FileNotFoundError:
+            typer.echo("Vault does not exist.")
+            raise typer.Exit(code=1)
 
 if __name__ == "__main__":
     app()
