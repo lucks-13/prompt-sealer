@@ -45,7 +45,7 @@ def test_key_derivation():
     key_2 = forge_lock(secret_2, salt)
 
     assert key_1 == key_2
-    len(key_1) == 32
+    assert len(key_1) == 32
     plaintext = b"Hello Prompt Sealer"
     nonce, ciphertext = seal_text(plaintext, key_1)
     decrypted_text = unseal_text(ciphertext, key_2, nonce)
@@ -80,4 +80,10 @@ def test_encryption_rejects_invalid_data():
     tampered = bytearray(ciphertext)
     tampered[0] ^= 1
     with pytest.raises(InvalidTag):
-        unseal_text(bytes(tampered), key)
+        unseal_text(bytes(tampered), key, nonce)
+    with pytest.raises(ValueError):
+        unseal_text(ciphertext, b"short", nonce)
+    with pytest.raises(ValueError):
+        unseal_text(ciphertext, key, b"short")
+    with pytest.raises(TypeError):
+        seal_text("Not Bytes", key)
