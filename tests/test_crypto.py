@@ -7,11 +7,34 @@ from prompt_sealer.crypto import roll_seed, nonce_seed, mint_pair, expose_token,
 def test_random_generation():
     seed = roll_seed()
     nonce = nonce_seed()
-    
     assert isinstance(seed, bytes)
     assert len(seed) == 32
-
+    assert isinstance(nonce, bytes)
+    assert len(nonce) == 12
     assert seed != roll_seed()
+    assert nonce != nonce_seed()
+
+def test_key_exchange():
+    private_1 = mint_pair()
+    public_1 = expose_token(private_1)
+    
+    private_2 = mint_pair()
+    public_2 = expose_token(private_2)
+
+    secret_1 = blend_secret(private_1, public_2)
+    secret_2 = blend_secret(private_2, public_1)
+    
+    assert secret_1 == secret_2
+    packed = pack_remote(public_1)
+    restored = read_remote(packed)
+    assert restored == public_1
+    assert isinstance(private_1, )
+    assert len(secret_1) == 32
+    assert len(secret_2) == 32
+
+
+
+
 
 def test_roll_seed():
     key = roll_seed()
@@ -32,19 +55,7 @@ def test_expose_token():
     public_key = expose_token(private_key)
     assert isinstance(public_key, X25519PublicKey)
 
-def test_blend_secret():
-    private_1 = mint_pair()
-    public_1 = expose_token(private_1)
-    
-    private_2 = mint_pair()
-    public_2 = expose_token(private_2)
 
-    secret_1 = blend_secret(private_1, public_2)
-    secret_2 = blend_secret(private_2, public_1)
-    
-    assert secret_1 == secret_2
-    assert len(secret_1) == 32
-    assert len(secret_2) == 32
 
 def test_forge_lock():
     shared_secret = roll_seed()
