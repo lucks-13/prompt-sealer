@@ -32,19 +32,13 @@ def test_vault_file_flow(tmp_path):
     write_cache(data, path)
     assert fetch_store(path) == data
 
-def test_vault_creation_and_validation(tmp_path):
+def test_vault_creation_and_loading(tmp_path):
     path = tmp_path / "vault.dat"
     init_vault(path)
     assert path.exists()
     assert check_vault(path) is True
     data = json.loads(fetch_store(path).decode("utf-8"))
     assert set(data) == {"encryption_key", "signing_key"}
-    en_key, sg_key = open_vault(path)
-    assert isinst
-
-def test_vault_loading(tmp_path):
-    path = tmp_path / "vault.dat"
-    init_vault(path)
     en_key, sg_key = open_vault(path)
     assert isinstance(en_key, X25519PrivateKey)
     assert isinstance(sg_key, Ed25519PrivateKey)
@@ -54,6 +48,9 @@ def test_invalid_vault(tmp_path):
     path.write_bytes(b"Invalid Vault")
     with pytest.raises(ValueError):
         open_vault(path)
+
+def test_vault_protection_and_cleanup(tmp_path):
+    
 
 def test_vault_destruction(tmp_path):
     path = tmp_path / "vault.dat"
