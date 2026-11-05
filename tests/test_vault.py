@@ -2,7 +2,7 @@ import json
 import pytest
 from pathlib import Path
 from prompt_sealer.crypto import mint_pair, mint_stamp
-from prompt_sealer.vault import seal_blob, unlock_record, tuck_away, unpack_token, tuck_badge, bring_badge, write_cache, fetch_store, create_vault, init_vault, open_vault, 
+from prompt_sealer.vault import seal_blob, unlock_record, tuck_away, unpack_token, tuck_badge, bring_badge, write_cache, fetch_store, create_vault, init_vault, open_vault, check_vault
 from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
@@ -105,3 +105,10 @@ def test_open_invalid_vault(tmp_path):
     path.write_bytes(b"Invalid Vault")
     with pytest.raises(ValueError):
         open_vault(path)
+
+def test_check_vault(tmp_path):
+    path = tmp_path / "vault.dat"
+    init_vault(path)
+    assert check_vault(path) is True
+
+def test_check_invalid_vault(tmp)
