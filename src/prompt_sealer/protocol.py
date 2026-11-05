@@ -8,4 +8,23 @@ def read_sealed(source : Path) -> dict:
     if not source.is_file():
         raise ValueError("Sealed prompt path must be a file.")
     try:
-        record = json.loads(source)
+        record = json.loads(source.read_bytes().decode("utf-8"))
+        if not isinstance(record, dict):
+            raise ValueError
+        if set(record) != {
+            "version",
+            "file_id",
+            "expires",
+            "challenge",
+            "nonce",
+            "ciphertext"
+        }:
+            raise ValueError
+        if record["version"] != 1:
+            raise ValueError
+        if not isinstance(record["file_id"], str):
+            raise ValueError
+        if not isinstance(record["expires"], int):
+            raise ValueError
+        if not isinstance(record["challenge"], str):
+            raise ValueError
