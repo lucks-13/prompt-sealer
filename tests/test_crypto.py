@@ -73,4 +73,11 @@ def test_encryption_roundtrip():
 def test_encryption_rejects_invalid_data():
     key = roll_seed()
     wrong_key = roll_seed()
-    pl
+    plaintext = b"Secret prompt content"
+    nonce, ciphertext = seal_text(plaintext, key)
+    with pytest.raises(InvalidTag):
+        unseal_text(ciphertext, wrong_key, nonce)
+    tampered = bytearray(ciphertext)
+    tampered[0] ^= 1
+    with pytest.raises(InvalidTag):
+        unseal_text(bytes(tampered), key)
