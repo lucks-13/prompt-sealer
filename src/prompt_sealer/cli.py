@@ -28,4 +28,8 @@ def check():
         typer.echo("Vault does not exist.")
         raise typer.Exit(code=1)
     except ValueError:
-        typer.echo("Vault is invalid ")
+        typer.echo("Vault is invalid or cannot be unlocked.")
+        raise typer.Exit(code=1)
+
+if __name__ == "__main__":
+    app()

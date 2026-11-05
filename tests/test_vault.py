@@ -35,10 +35,10 @@ def test_vault_file_flow(tmp_path):
 def test_vault_creation_and_validation(tmp_path):
     path = tmp_path / "vault.dat"
     init_vault(path)
+    assert path.exists()
     assert check_vault(path) is True
     data = json.loads(fetch_store(path).decode("utf-8"))
-    assert "encryption_key" in data
-    assert "signing_key" in data
+    assert set(data) == {"encryption_key", "signing_key"}
 
 def test_vault_loading(tmp_path):
     path = tmp_path / "vault.dat"
