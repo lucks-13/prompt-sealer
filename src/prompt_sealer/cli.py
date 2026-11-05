@@ -2,6 +2,7 @@ import typer
 from pathlib import Path
 from prompt_sealer.sealer import derive_prompt_key, seal_file, unseal_file
 from prompt_sealer.vault import init_vault, check_vault,destroy_vault, open_vault
+from cryptography.exceptions import InvalidTag
 
 app = typer.Typer(name="prompt-sealer",help="Seal and manage encrypted prompt files.")
 
@@ -67,12 +68,12 @@ def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault
         if not confirmed:
             typer.echo("Vault was not deleted.")
             raise typer.Exit()
-        try:
-            destroy_vault(vault_path)
-            typer.echo("Vault destroyed.")
-        except FileNotFoundError:
-            typer.echo("Vault does not exist.")
-            raise typer.Exit(code=1)
+    try:
+        destroy_vault(vault_path)
+        typer.echo("Vault destroyed.")
+    except FileNotFoundError:
+        typer.echo("Vault does not exist.")
+        raise typer.Exit(code=1)
 
 if __name__ == "__main__":
     app()
