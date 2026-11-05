@@ -49,7 +49,15 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
-        return unseal_text(ciphertext, key, nonce)
+        extra = json.dumps(
+            {
+                
+            },
+            sort_keys=True,
+            separators=(",", ":")
+        ).encode("utf-8")
+
+        return unseal_text(ciphertext, key, nonce, extra)
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid or cannot be decrypted.") from None
 
