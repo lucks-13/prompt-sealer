@@ -31,7 +31,9 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["challenge"], str)  or len(bytes.fromhex(record["challenge"])) != 32:
             raise ValueError
-        if  or len(bytes.fromhex(record["file_id"])) != 32:
+        if len(bytes.fromhex(record["nonce"])) != 12:
+            raise ValueError
+        if not bytes.fromhex(record["ciphertext"]):
             raise ValueError
         bytes.fromhex(record["file_id"])
         bytes.fromhex(record["challenge"])
@@ -49,12 +51,10 @@ def make_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes) -> s
 
 def verify_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes, code : str) -> bool:
     excepted = make_code_a(machine_secret, file_id, challenge)
-    return code.strip().upper() == excepted
+    return hmac.compare_digest(code.strip().upper(), excepted)
 
-def make_code_b(machine_secret : bytes, file_id : bytes, challenge : bytes) -> str:
-    proof = forge_lock(machine_secret, file_id, b"prompt-sealer-code-b")
-    data = proof + challenge
-    return hashlib.sha256(data).hexdigest()[:12].upper()
+def make_code_b() -> str:
+    return secrets.token_hex(16).upper()
 
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
