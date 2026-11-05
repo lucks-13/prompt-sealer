@@ -76,7 +76,8 @@ def authorize(source : Path, machine_secret : bytes, code_a : str, state_path : 
             state = json.loads(state_path.read_bytes().decode("utf-8"))
             if not isinstance(state,dict):
                 raise ValueError
-        except (UnicodeDecodeError, json.JSONDecodeError, TypeError, V)
+        except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
+            raise ValueError("Authorization state is invalid.") from None
     state[file_id.hex()] = {
         "code_b" : code_b,
         "expires" : record["expires"],
@@ -89,6 +90,8 @@ def authorize(source : Path, machine_secret : bytes, code_a : str, state_path : 
 def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Path) -> bytes:
     record = read_sealed(source)
     file_id = record["file_id"]
+    if not isinstance(file_id, str) or len(bytes.fromhex(file_id)) != 32:
+        raise ValueError("Prompt file is invalid.")
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
     if not state_path.exists():
@@ -98,6 +101,11 @@ def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Pat
         entry = state[file_id]
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("No authorization exists.") from None
+    if not isinstance(entry, dict):
+        raise ValueError("Authorization is invalid.")
+    if not isinstance(entry.get("code_b"), str) or not isinstance(entry.get("expires"), int):
+        
+    
     if entry["used"]:
         raise ValueError("Access code has already been used.")
     if int(time.time()) >= entry["expires"]:
