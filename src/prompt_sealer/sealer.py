@@ -3,7 +3,6 @@ from pathlib import Path
 from prompt_sealer.crypto import seal_text, unseal_text
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
 def read_prompt(location : Path) -> bytes:
     if not location.exists():
@@ -14,13 +13,13 @@ def read_prompt(location : Path) -> bytes:
         raise ValueError("Prompt file must be .txt or .md")
     return location.read_bytes()
 
-def derive_prompt_key(vault_key : X25519PrivateKey) -> bytes:
-    shared = vault_key.exchange(vault_key.public_key())
-    return HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"prompt-sealer-prompt-key").derive(shared)
+def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
+    return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
-def seal_prompt(prompt : bytes, key : bytes) -> bytes:
+def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
     nonce, ciphertext = seal_text(prompt, key)
     record = {
+        
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
     }
