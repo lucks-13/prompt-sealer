@@ -42,7 +42,10 @@ def test_vault_creation_and_validation(tmp_path):
 
 def test_vault_loading(tmp_path):
     path = tmp_path / "vault.dat"
-    init_vault()
+    init_vault(path)
+    en_key, sg_key = open_vault(path)
+    assert isinstance(en_key, X25519PrivateKey)
+    assert isinstance(sg_key, Ed25519PrivateKey)
 
 def test_invalid_vault(tmp_path):
     path = tmp_path / "vault.dat"

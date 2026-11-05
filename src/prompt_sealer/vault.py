@@ -59,7 +59,7 @@ def init_vault(location : Path) -> None:
     vault_data = create_vault()
     write_cache(vault_data, location)
 
-def open_vault(location : Path) -> tuple[X25519PrivateKey, X25519PrivateKey]:
+def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey]:
     try:
         data = json.loads(fetch_store(location).decode("utf-8"))
         en_key = bytes.fromhex(data["encryption_key"])

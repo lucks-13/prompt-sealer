@@ -1,6 +1,6 @@
 import pytest
 from cryptography.exceptions import InvalidTag
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey, X25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey, Ed25519PrivateKey
 from prompt_sealer.crypto import roll_seed, nonce_seed, mint_pair, expose_token, blend_secret, forge_lock, pack_remote, read_remote, mint_stamp, reveal_badge, stamp_note, check_mark, seal_text, unseal_text
 
