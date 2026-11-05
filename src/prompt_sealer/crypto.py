@@ -22,7 +22,7 @@ def expose_token(seed : X25519PrivateKey) -> X25519PublicKey:
 def blend_secret(vault_key : X25519PrivateKey, peer : X25519PublicKey) -> bytes:
     return vault_key.exchange(peer)
 
-def forge_lock(bridge : bytes, grain : bytes) -> bytes:
+def forge_lock(bridge : bytes, grain : bytes | None, label : bytes) -> bytes:
     hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=grain, info=b"prompt-sealer-encryption")
     return hkdf.derive(bridge)
 
@@ -50,21 +50,21 @@ def check_mark(badge : Ed25519PublicKey, mark : bytes, note : bytes) -> bool:
     except InvalidSignature:
          return False
 
-def seal_text(raw_note : bytes, lock_key : bytes) -> tuple[bytes, bytes]:
+def seal_text(raw_note : bytes, lock_key : bytes, extra : bytes | None = None) -> tuple[bytes, bytes]:
     if len(lock_key) != 32:
         raise ValueError("Encryption key must be exactly 32 bytes.")
     if not isinstance(raw_note, bytes):
         raise TypeError("Plain-Text must be bytes.")
     iv = nonce_seed()
     box = AESGCM(lock_key)
-    sealed_pack = box.encrypt(iv, raw_note, None)
+    sealed_pack = box.encrypt(iv, raw_note, extra)
     return iv, sealed_pack
 
-def unseal_text(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
+def unseal_text(ciphertext: bytes, key: bytes, nonce: bytes, extra : bytes | None = None) -> bytes:
     if len(key) != 32:
             raise ValueError("Encryption key must be exactly 32 bytes.")
     if len(nonce) != 12:
             raise ValueError("Nonce must be exactly 12 bytes.")
     aesgcm = AESGCM(key)
-    plaintext = aesgcm.decrypt(nonce,ciphertext, None)
+    plaintext = aesgcm.decrypt(nonce,ciphertext, extra)
     return plaintext       
