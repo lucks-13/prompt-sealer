@@ -62,6 +62,10 @@ def init_vault(location : Path) -> None:
 def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey]:
     try:
         data = json.loads(fetch_store(location).decode("utf-8"))
+        if not isinstance(data, dict):
+            raise ValueError
+        if set(data) != {"encryption_key", "signing_key"}:
+            raise ValueError
         en_key = bytes.fromhex(data["encryption_key"])
         sg_key = bytes.fromhex(data["signing_key"])
         return unpack_token(en_key), bring_badge(sg_key)
@@ -69,9 +73,7 @@ def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey]:
         raise ValueError("Vault is invalid or cannot be unlocked.") from None
 
 def check_vault(location : Path) -> bool:
-    data = json.loads(fetch_store(location).decode("utf-8"))
-    if not isinstance(data, dict):
-        raise ValueError("Invalid vault structure.")
     open_vault(location)
     return True
 
+def destroy_vault(lo)
