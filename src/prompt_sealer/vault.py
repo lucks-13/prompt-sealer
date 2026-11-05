@@ -76,4 +76,9 @@ def check_vault(location : Path) -> bool:
     open_vault(location)
     return True
 
-def destroy_vault(lo)
+def destroy_vault(location : Path) -> None:
+    if not location.exists():
+        raise FileNotFoundError("Vault file does not exist.")
+    location.unlink()
+
+
