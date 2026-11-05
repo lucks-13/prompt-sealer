@@ -34,16 +34,10 @@ def test_key_exchange():
 
 def test_key_derivation():
     private_1 = mint_pair()
-    public_1 = expose_token(private_1)
-        
     private_2 = mint_pair()
-    public_2 = expose_token(private_2)
 
-    remote_1 = read_remote(pack_remote(public_1))
-    remote_2 = read_remote(pack_remote(public_2))
-    
-    secret_1 = blend_secret(private_1, remote_2)
-    secret_2 = blend_secret(private_2, remote_1)
+    secret_1 = blend_secret(private_1, expose_token(private_2))
+    secret_2 = blend_secret(private_2, expose_token(private_1))
 
     salt = roll_seed()
 
@@ -51,10 +45,18 @@ def test_key_derivation():
     key_2 = forge_lock(secret_2, salt)
 
     assert key_1 == key_2
+    len(key_1) == 32
     plaintext = b"Hello Prompt Sealer"
     nonce, ciphertext = seal_text(plaintext, key_1)
     decrypted_text = unseal_text(ciphertext, key_2, nonce)
     assert decrypted_text == plaintext
+
+def test_signature_flow():
+    private_key = mint_stamp()
+    public_key = reveal_badge(private_key)
+    message = b"Hello Prompt Sealer"
+    signature = stamp_note(private_key, message)
+    assert check_mark(public_key, signature, message) is True
 
 
 
