@@ -58,3 +58,5 @@ def init_vault(location : Path) -> None:
         raise FileExistsError("Vault already exists.")
     vault_data = create_vault()
     write_cache(vault_data, location)
+
+def open_vault(location )

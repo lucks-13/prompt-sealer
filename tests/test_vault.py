@@ -89,4 +89,6 @@ def test_init_vault(tmp_path):
 def test_init_vault_no_overwrite(tmp_path):
     path = tmp_path / "vault.dat"
     path.write_bytes(b"Existing Data")
-    with pytest 
+    with pytest.raises(FileExistsError):
+        init_vault(path)
+    assert path.read_bytes() == b"Existing Data"
