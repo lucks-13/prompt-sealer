@@ -59,4 +59,7 @@ def check_expire(expires : int) -> bool:
 def authorize(source : Path, machine_secret : bytes, code_a : str) -> str:
     record = read_sealed(source)
     file_id = bytes.fromhex(record["file_id"])
-    challenge = 
+    challenge = bytes.fromhex(record["challenge"])
+    if not check_expire(record["expires"]):
+        raise ValueError("Prompt file has expired.")
+    
