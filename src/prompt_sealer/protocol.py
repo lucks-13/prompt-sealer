@@ -28,3 +28,13 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["challenge"], str):
             raise ValueError
+        bytes.fromhex(record["file_id"])
+        bytes.fromhex(record["challenge"])
+        bytes.fromhex(record["nonce"])
+        bytes.fromhex(record["ciphertext"])
+
+        return record
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        raise ValueError("Prompt file is invalid.") from None
+
+    
