@@ -23,7 +23,7 @@ def blend_secret(vault_key : X25519PrivateKey, peer : X25519PublicKey) -> bytes:
     return vault_key.exchange(peer)
 
 def forge_lock(bridge : bytes, grain : bytes | None, label : bytes) -> bytes:
-    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=grain, info=b"prompt-sealer-encryption")
+    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=grain, info=label)
     return hkdf.derive(bridge)
 
 def pack_remote(badge : X25519PublicKey) -> bytes:
