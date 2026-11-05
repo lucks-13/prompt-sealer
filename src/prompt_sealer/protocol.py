@@ -89,4 +89,11 @@ def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Pat
         raise ValueError("No authorization exists.")
     try:
         state = json.loads(state_path.read_bytes().decode("utf-8"))
-        entry = state[]
+        entry = state[field_id]
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        raise ValueError("No authorization exists.") from None
+    if entry["used"]:
+        raise ValueError("Access code has already been used.")
+    if int(time.time()) >= entry["expires"]:
+        raise ValueError("Authorization has expired.")
+    if not hmac
