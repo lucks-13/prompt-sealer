@@ -46,7 +46,7 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
         typer.echo(str(error))
         raise typer.Exit(code=1)
 
-
+@app.command()
 def unseal(source : Path = typer.Argument(..., help="Sealed prompt file."), dest : Path = typer.Argument(..., help="Output prompt file.")):
     try:
         en_key, _ = open_vault(vault_path)
@@ -60,7 +60,10 @@ def unseal(source : Path = typer.Argument(..., help="Sealed prompt file."), dest
         typer.echo(str(error))
         raise typer.Exit(code=1)
 
-
+@app.command()
+def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault without confirmation.")):
+    if not force:
+        confirmed = typer.confirm("Delete the prompt ")
 
 if __name__ == "__main__":
     app()
