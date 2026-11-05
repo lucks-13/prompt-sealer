@@ -21,4 +21,13 @@ def seal_prompt(prompt : bytes, key : bytes) -> bytes:
 
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     try:
-        record = json.loads(blob.decode("utf"))
+        record = json.loads(blob.decode("utf-8"))
+        if not isinstance(record, dict):
+            raise ValueError
+        if set(record) != {"nonce", "ciphertext"}:
+            raise ValueError
+        nonce = bytes.fromhex(record["nonce"])
+        ciphertext = bytes.fromhex(record["ciphertext"])
+        return unseal_text(ciphertext, key, nonce)
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        raise ValueError("Prompt file is invalid or cannot be decrypted.") from None
