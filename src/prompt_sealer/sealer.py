@@ -19,7 +19,10 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
 def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
     nonce, ciphertext = seal_text(prompt, key)
     record = {
-        
+        "version" : 1,
+        "file_id" : file_id.hex(),
+        "expires" : expires,
+        "challenge" : challenge.hex(),
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
     }
@@ -30,7 +33,9 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         record = json.loads(blob.decode("utf-8"))
         if not isinstance(record, dict):
             raise ValueError
-        if set(record) != {"nonce", "ciphertext"}:
+        if set(record) != {"version", "file_id", "expires", "challenge", "nonce", "ciphertext"}:
+            raise ValueError
+        if record["version"] != 1:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
@@ -38,7 +43,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid or cannot be decrypted.") from None
 
-def seal_file(source : Path, dest : Path, key : bytes) -> None:
+def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> None:
     prompt = read_prompt(source)
     sealed = seal_prompt(prompt, key)
     dest.parent.mkdir(parents=True, exist_ok=True)
