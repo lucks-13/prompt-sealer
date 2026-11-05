@@ -57,6 +57,8 @@ def unseal(source : Path = typer.Argument(..., help="Sealed prompt file."), dest
     except FileNotFoundError as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)
+    except InvalidTag:
+        typer.echo("Prompt file is invalid or cannot be decrypted.")
     except ValueError as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)
