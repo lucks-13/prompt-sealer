@@ -14,11 +14,17 @@ def read_prompt(location : Path) -> bytes:
     return location.read_bytes()
 
 def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
+    if len(machine_secret) != 32 or len(file_id) != 32:
+        raise ValueError("Machine secret and file ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
 def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
     if len(file_id) != 32:
-        raise ValueError("File ID must ")
+        raise ValueError("File ID must be exactly 32 bytes.")
+    if len(challenge) != 32:
+        raise ValueError("Challenge must be exactly 32 bytes.")
+    if type(expires) is not int or expires <= 0:
+        raise ValueError("Invalid expiration timestamp.")
     extra = json.dumps(
         {
             "version" : 1,
@@ -47,7 +53,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         if set(record) != {"version", "file_id", "expires", "challenge", "nonce", "ciphertext"}:
             raise ValueError
-        if record["version"] != 1:
+        if record["version"] != 1 or type(record["version"] i):
             raise ValueError
         if not isinstance(record["file_id"], str):
             raise ValueError
