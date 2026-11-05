@@ -47,7 +47,12 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         if record["version"] != 1:
             raise ValueError
-        if not isinstance(record["file_id"])
+        if not isinstance(record["file_id"], str):
+            raise ValueError
+        if not isinstance(record["expires"],int):
+            raise ValueError
+        if not isinstance(record["challenge"], str):
+            raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
         extra = json.dumps(
