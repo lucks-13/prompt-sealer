@@ -69,4 +69,9 @@ def open_vault(location : Path) -> tuple[X25519PrivateKey, X25519PrivateKey]:
         raise ValueError("Vault is invalid or cannot be unlocked.") from None
 
 def check_vault(location : Path) -> bool:
-    data = json.loads
+    data = json.loads(fetch_store(location).decode("utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError("Invalid vault structure.")
+    open_vault(location)
+    return True
+
