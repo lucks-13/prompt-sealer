@@ -59,9 +59,18 @@ def test_signature_flow():
     assert isinstance(private_key, Ed25519PrivateKey)
     assert check_mark(public_key, signature, message)
     altered_message = b"Modified Prompt"
-    assert check_mark(public_key, signature, altered_message)
+    assert not check_mark(public_key, signature, altered_message)
 
 def test_encryption_roundtrip():
     key = roll_seed()
     plaintext = b"Secret prompt content"
-    
+    nonce, ciphertext = seal_text(plaintext, key)
+    decrypted = unseal_text(ciphertext, key, nonce)
+    assert decrypted == plaintext
+    assert ciphertext != plaintext
+    assert len(nonce) == 12
+
+def test_encryption_rejects_invalid_data():
+    key = roll_seed()
+    wrong_key = roll_seed()
+    pl
