@@ -13,11 +13,14 @@ def test_dpapi_flow():
     assert protected != data
     assert unlock_record(protected) == data
 
-def test_unlock_record():
-    data = b"Hello Prompt Sealer"
-    protected = seal_blob(data)
-    decrypted = unlock_record(protected)
-    assert decrypted == data
+def test_key_storage_flow():
+    en_key = mint_pair()
+    sg_key = mint_stamp()
+
+    restored_en = unpack_token(tuck_away(en_key))
+    restored_sg = bring_badge(tuck_badge(sg_key))
+
+    assert 
 
 def test_empty_unlock_record():
     data = b""
