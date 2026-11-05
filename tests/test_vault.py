@@ -30,7 +30,15 @@ def test_vault_file_flow(tmp_path):
     path = tmp_path / "nested" / "vault.dat"
     data = b"Vault test data"
     write_cache(data, path)
-    
+    assert fetch_store(path) == data
+
+def test_vault_creation_and_validation(tmp_path):
+    path = tmp_path / "vault.dat"
+    init_vault(path)
+    assert check_vault(path) is True
+    data = json.loads(fetch_store(path).decode("utf-8"))
+    assert "encryption_key" in data
+    assert 
 
 def test_empty_unlock_record():
     data = b""
