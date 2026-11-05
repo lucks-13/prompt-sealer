@@ -40,4 +40,10 @@ def seal_file(source : Path, dest : Path, key : bytes) -> None:
 
 def unseal_file(source : Path, dest : Path, key : bytes) -> None:
     if not source.exists():
-        raise FileNotFoundError("Se")
+        raise FileNotFoundError("Sealed prompt file does not exist.")
+    if not source.is_file():
+        raise ValueError("Sealed prompt path must be a file.")
+    prompt = unseal_prompt(source.read_bytes(), key)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(prompt)
+
