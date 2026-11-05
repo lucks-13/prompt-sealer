@@ -3,18 +3,15 @@ import pytest
 from pathlib import Path
 from prompt_sealer.crypto import mint_pair, mint_stamp
 from prompt_sealer.vault import seal_blob, unlock_record, tuck_away, unpack_token, tuck_badge, bring_badge, write_cache, fetch_store, create_vault, init_vault, open_vault, check_vault
-from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
 def test_dpapi_flow():
-
-
-def test_seal_blob():
     data = b"Hello Prompt Sealer"
     protected = seal_blob(data)
     assert isinstance(protected, bytes)
     assert protected != data
+    assert unlock_record(protected) == data
 
 def test_unlock_record():
     data = b"Hello Prompt Sealer"
