@@ -40,6 +40,8 @@ def write_cache(data : bytes, path : Path) -> None:
 def fetch_store (location : Path) -> bytes:
     if not location.exists():
         raise FileNotFoundError("Vault file does not exist.")
+    if not location.is_file():
+        raise ValueError("Vault path must be a file.")
     return location.read_bytes()
 
 def create_vault() -> bytes:
@@ -48,6 +50,7 @@ def create_vault() -> bytes:
     p_en_key = tuck_away(en_key)
     p_sign_key = tuck_badge(sign_key)
     vault_data = {
+        "version" : 1,
         "encryption_key" : p_en_key.hex(),
         "signing_key" : p_sign_key.hex()
     }
@@ -64,7 +67,9 @@ def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey]:
         data = json.loads(fetch_store(location).decode("utf-8"))
         if not isinstance(data, dict):
             raise ValueError
-        if set(data) != {"encryption_key", "signing_key"}:
+        if set(data) != {"version", "encryption_key", "signing_key"}:
+            raise ValueError
+        if data["version"] != 1:
             raise ValueError
         en_key = bytes.fromhex(data["encryption_key"])
         sg_key = bytes.fromhex(data["signing_key"])
@@ -79,6 +84,8 @@ def check_vault(location : Path) -> bool:
 def destroy_vault(location : Path) -> None:
     if not location.exists():
         raise FileNotFoundError("Vault file does not exist.")
+    if not location.is_file():
+        raise ValueError("Vault path must be a file.")
     location.unlink()
 
 
