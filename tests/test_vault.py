@@ -7,6 +7,9 @@ from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
+def test_dpapi_flow():
+
+
 def test_seal_blob():
     data = b"Hello Prompt Sealer"
     protected = seal_blob(data)
@@ -111,4 +114,5 @@ def test_check_vault(tmp_path):
     init_vault(path)
     assert check_vault(path) is True
 
-def test_check_invalid_vault(tmp)
+
+    
