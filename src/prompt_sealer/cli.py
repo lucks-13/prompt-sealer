@@ -1,6 +1,7 @@
 import typer
 from pathlib import Path
-from prompt_sealer.vault import init_vault, check_vault
+from prompt_sealer.sealer import derive_prompt_key, seal_file, unseal_file
+from prompt_sealer.vault import init_vault, check_vault,destroy_vault, open_vault
 
 app = typer.Typer(name="prompt-sealer",help="Seal and manage encrypted prompt files.")
 
@@ -30,6 +31,9 @@ def check():
     except ValueError:
         typer.echo("Vault is invalid or cannot be unlocked.")
         raise typer.Exit(code=1)
+
+@app.command()
+def seal():
 
 if __name__ == "__main__":
     app()
