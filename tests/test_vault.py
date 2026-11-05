@@ -95,3 +95,9 @@ def test_init_vault_no_overwrite(tmp_path):
 
 def test_open_vault(tmp_path):
     path = tmp_path / "vault.dat"
+    init_vault(path)
+    en_key, sg_key = open_vault(path)
+    assert isinstance(en_key, X25519PrivateKey)
+    assert isinstance(sg_key, Ed25519PrivateKey)
+
+def test_open_invalid_vault(tmp)
