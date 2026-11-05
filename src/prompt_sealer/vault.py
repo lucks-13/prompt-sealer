@@ -12,7 +12,7 @@ def seal_blob(data : bytes) -> bytes:
 
 def unlock_record(blob : bytes) -> bytes:
     try:
-        result = win32crypt.CryptUnprotectData(blob, None, None, None, 1)
+        result = win32crypt.CryptUnprotectData(blob, None, None, None, 0)
         return result[1]
     except pywintypes.error:
         raise ValueError("Unable to decrypt protected data.") from None
