@@ -20,7 +20,17 @@ def test_key_storage_flow():
     restored_en = unpack_token(tuck_away(en_key))
     restored_sg = bring_badge(tuck_badge(sg_key))
 
-    assert 
+    assert isinstance(restored_en, X25519PrivateKey)
+    assert isinstance(restored_sg, Ed25519PrivateKey)
+
+    assert restored_en.public_key() == en_key.public_key()
+    assert restored_sg.public_key() == sg_key.public_key()
+
+def test_vault_file_flow(tmp_path):
+    path = tmp_path / "nested" / "vault.dat"
+    data = b"Vault test data"
+    write_cache(data, path)
+    
 
 def test_empty_unlock_record():
     data = b""
