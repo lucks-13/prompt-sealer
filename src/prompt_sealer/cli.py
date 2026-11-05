@@ -37,9 +37,12 @@ def check():
 @app.command()
 def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest : Path = typer.Argument(..., help="Output sealed file.")):
     try:
-        en_key, _ = open_vault(vault_path)
-        p_key = derive_prompt_key(en_key)
-        seal_file(source, dest, p_key)
+        _, _, machine_secret = open_vault(vault_path)
+        file_id = roll_seed()
+        challenge = roll_seed()
+        expires = int(time.time()) + 3600
+        p_key = derive_prompt_key(machine_secret, file_id)
+        seal_file(source, dest, p_key, file_id, expires, challenge)
         typer.echo(f"Prompt sealed : {dest}")
     except FileNotFoundError as error:
         typer.echo(str(error))
