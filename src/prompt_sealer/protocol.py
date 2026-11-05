@@ -3,6 +3,7 @@ import json
 import time
 from pathlib import Path
 from prompt_sealer.crypto import forge_lock
+from prompt_sealer.sealer import derive_prompt_key, unseal_prompt
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -24,11 +25,13 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if record["version"] != 1:
             raise ValueError
-        if not isinstance(record["file_id"], str):
+        if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
         if not isinstance(record["expires"], int):
             raise ValueError
-        if not isinstance(record["challenge"], str):
+        if not isinstance(record["challenge"], str)  or len(bytes.fromhex(record["challenge"])) != 32:
+            raise ValueError
+        if  or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
         bytes.fromhex(record["file_id"])
         bytes.fromhex(record["challenge"])
