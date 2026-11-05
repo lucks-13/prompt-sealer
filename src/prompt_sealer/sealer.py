@@ -17,6 +17,8 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
 def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
+    if len(file_id) != 32:
+        raise ValueError("File ID must ")
     extra = json.dumps(
         {
             "version" : 1,

@@ -62,4 +62,6 @@ def authorize(source : Path, machine_secret : bytes, code_a : str) -> str:
     challenge = bytes.fromhex(record["challenge"])
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
-    
+    if not verify_code_a(machine_secret, file_id, challenge, code_a):
+        raise ValueError("Invalid access code.")
+    return make_code_b(machine_secret, file_id, challenge)
