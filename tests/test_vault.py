@@ -59,4 +59,11 @@ def test_vault_protection_and_cleanup(tmp_path):
     destroy_vault(path)
     assert not path.exists()
     with pytest.raises(FileNotFoundError):
-        de
+        destroy_vault(path)
+
+def test_missing_vault():
+    path = Path("missing_vault.dat")
+    with pytest.raises(FileNotFoundError):
+        fetch_store(path)
+    with pytest.raises(FileNotFoundError):
+        destroy_vault(path)
