@@ -17,7 +17,17 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
 def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
-    nonce, ciphertext = seal_text(prompt, key)
+    extra = json.dumps(
+        {
+            "version" : 1,
+            "field_id" : file_id.hex(),
+            "expires" : expires,
+            "challenge" : challenge.hex(),
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    nonce, ciphertext = seal_text(prompt, key, extra)
     record = {
         "version" : 1,
         "file_id" : file_id.hex(),
@@ -45,7 +55,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
 
 def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> None:
     prompt = read_prompt(source)
-    sealed = seal_prompt(prompt, key)
+    sealed = seal_prompt(prompt, key, file_id, expires, challenge)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(sealed)
 
