@@ -39,4 +39,11 @@ def read_sealed(source : Path) -> dict:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
 
-def make_code_a()
+def make_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes) -> str:
+    proof = forge_lock(machine_secret, file_id, b"prompt-sealer-code-a")
+    data = proof + challenge
+    return hashlib.sha256(data).hexdigest()[:12].upper()
+
+def verify_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes, code : str) -> bool:
+    excepted = make_code_a(machine_secret, file_id, challenge)
+    return code.strip().upper() == ex
