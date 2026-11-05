@@ -31,3 +31,13 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         return unseal_text(ciphertext, key, nonce)
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid or cannot be decrypted.") from None
+
+def seal_file(source : Path, dest : Path, key : bytes) -> None:
+    prompt = read_prompt(source)
+    sealed = seal_prompt(prompt, key)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(sealed)
+
+def unseal_file(source : Path, dest : Path, key : bytes) -> None:
+    if not source.exists():
+        raise FileNotFoundError("Se")
