@@ -1,5 +1,7 @@
 import hashlib
+import hmac
 import json
+import secrets
 import time
 from pathlib import Path
 from prompt_sealer.crypto import forge_lock
@@ -78,18 +80,18 @@ def authorize(source : Path, machine_secret : bytes, code_a : str, state_path : 
     }
     state_path.parent.mkdir(parents=True, exist_ok=True)
     state_path.write_bytes(json.dumps(state, separators=(",", ":")).encode("utf-8"))
-    return make_code_b
+    return code_b
 
 def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Path) -> bytes:
     record = read_sealed(source)
-    field_id = record["field_id"]
+    file_id = record["file_id"]
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
     if not state_path.exists():
         raise ValueError("No authorization exists.")
     try:
         state = json.loads(state_path.read_bytes().decode("utf-8"))
-        entry = state[field_id]
+        entry = state[file_id]
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("No authorization exists.") from None
     if entry["used"]:

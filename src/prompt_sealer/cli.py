@@ -58,7 +58,7 @@ def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt fil
     try:
         _, _, machine_secret = open_vault(vault_path)
         code_b = authorize(source, machine_secret, code_a, state_path)
-        typer.exho(f"Access Code B : {code_b}")
+        typer.echo(f"Access Code B : {code_b}")
     except (FileNotFoundError, ValueError) as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)
@@ -70,7 +70,10 @@ def redeem_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."
         prompt = redeem(source, machine_secret, code_b, state_path)
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(prompt)
-        typer.echo(f" ")
+        typer.echo(f"Prompt redeemed : {dest}")
+    except (FileNotFoundError, ValueError) as error:
+        typer.echo(str(error))
+        raise typer.Exit(code=1)
 
 @app.command()
 def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault without confirmation.")):
