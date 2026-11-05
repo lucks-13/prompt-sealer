@@ -104,8 +104,9 @@ def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Pat
     if not isinstance(entry, dict):
         raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("code_b"), str) or not isinstance(entry.get("expires"), int):
-        
-    
+        raise ValueError("Authorization is invalid.")
+    if not isinstance(entry.get("used"), bool):
+        raise ValueError("Authorization is invalid.")
     if entry["used"]:
         raise ValueError("Access code has already been used.")
     if int(time.time()) >= entry["expires"]:
