@@ -40,11 +40,12 @@ def check():
 @app.command()
 def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest : Path = typer.Argument(..., help="Output sealed file.")):
     try:
-        open_vault(vault_path)
+        _, _, machine_secret = open_vault(vault_path)
         file_id = roll_seed()
         challenge = roll_seed()
         expires = int(time.time()) + 3600
-        seal_file(source, dest, file_id, expires, challenge)
+        p_key = derive_prompt_key(machine_secret, file_id)
+        seal_file(source, dest, p_key, file_id, expires, challenge)
         typer.echo(f"Prompt sealed : {dest}")
         typer.echo("")
         typer.echo("Share this sealed file with Ai :")
