@@ -115,10 +115,17 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
     challenge = bytes.fromhex(record["challenge"])
     if not verify_code_a(code_a, challenge):
         raise ValueError("Invalid access code.")
-    code_a_hash = hashlib.sha256()
-    
+    code_a_hash = hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
+    if not hmac.compare_digest(code_a_hash, record["code_a_hash"]):
+        raise ValueError("Invalid sealed prompt.")
     if record["wrapped_key"] is not None:
         raise ValueError("Prompt has already been authorized.")
+    state = read_state(state_path)
+    file_id_hex = file_id.hex()
+    if file_id_hex in state:
+        entry = state[file_id_hex]
+        if (isinstance(entry, dict))
+    
     code_b = make_code_b(code_a, prompt_key, file_id)
     sealed = attach_code_b(source.read_bytes(), prompt_key, code_b)
     source.write_bytes(sealed)
