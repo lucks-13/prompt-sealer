@@ -1,9 +1,9 @@
+import hashlib
 import hmac
 import json
-import secrets
 import time
 from pathlib import Path
-from prompt_sealer.sealer import make_code_a
+from prompt_sealer.sealer import make_code_a, attach_code_b, derive_prompt_key, read_prompt, unwrap_p_key, unseal_prompt
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -22,10 +22,11 @@ def read_sealed(source : Path) -> dict:
             "code_a_hash",
             "bootstrap",
             "nonce",
-            "ciphertext"
+            "ciphertext",
+            "wrapped_key"
         }:
             raise ValueError
-        if type(record["version"]) is not int or record["version"] != 2:
+        if type(record["version"]) is not int or record["version"] != 1:
             raise ValueError
         if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
