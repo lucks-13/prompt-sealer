@@ -5,6 +5,7 @@ from prompt_sealer.vault import init_vault, check_vault,destroy_vault, open_vaul
 from prompt_sealer.crypto import roll_seed
 from prompt_sealer.protocol import authorize, redeem
 import time
+import json
 
 app = typer.Typer(name="prompt-sealer",help="Seal and manage encrypted prompt files.")
 
@@ -59,7 +60,7 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
 def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_a : str = typer.Argument(..., help="Access code A.")):
     try:
         _, _, machine_secret = open_vault(vault_path)
-        file_id = bytes.fromhex(__import__("json").loads(source.read_bytes().decode("utf-8"))["file_id"])
+        file_id = bytes.fromhex(json.loads(source.read_bytes().decode("utf-8"))["file_id"])
         p_key = derive_prompt_key(machine_secret, file_id)
         code_b = authorize(source, code_a, p_key, state_path)
         typer.echo(f"Access Code B : {code_b}")
