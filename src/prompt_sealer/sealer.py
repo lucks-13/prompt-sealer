@@ -186,6 +186,8 @@ def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
             raise ValueError
         if record["version"] != 1:
             raise ValueError
+        if record["wrapped_key"] is not None:
+            raise ValueError("")
         file_id = bytes.fromhex(record["file_id"])
         wrap_key = wrap_p_key(p_key, code_b, file_id)
         record["wrapped_key"] = wrap_key.hex()
