@@ -63,7 +63,8 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
 def make_code_a(challenge : bytes) -> str:
     if len(challenge) != 32:
         raise ValueError ("Challenge must be exactly 32 bytes.")
-    val = hashlib.sha256(b"prompt-sealer-code-a:"+challenge).hexdigest()[:32]
+    challenge_hex = challenge.hex()
+    val = hashlib.sha256(b"prompt-sealer-code-a:"+challenge_hex.encode("ascii")).hexdigest()[:32]
     return val.upper()
 
 def hash_code_a(code_a : str) -> str:
