@@ -98,8 +98,8 @@ def read_state(state_path : Path) -> dict:
         if not isinstance(state, dict):
             raise ValueError
         return state
-    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError)
-
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        raise ValueError("Authorization state is invalid.") from None
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
@@ -115,6 +115,8 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
     challenge = bytes.fromhex(record["challenge"])
     if not verify_code_a(code_a, challenge):
         raise ValueError("Invalid access code.")
+    code_a_hash = hashlib.sha256()
+    
     if record["wrapped_key"] is not None:
         raise ValueError("Prompt has already been authorized.")
     code_b = make_code_b(code_a, prompt_key, file_id)
