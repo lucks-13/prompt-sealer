@@ -48,7 +48,7 @@ def make_code_a() -> str:
     return secrets.token_hex(16).upper()
 
 def hash_code_a(code_a : str) -> str:
-    return hashlib.sha256(code_a.strip().)
+    return hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
 
 def payload(prompt : bytes) -> bytes:
     if not isinstance(prompt, bytes):
@@ -61,13 +61,16 @@ def payload(prompt : bytes) -> bytes:
         + prompt
     )
 
-def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
+def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes, code_a : str) -> bytes:
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
     if len(challenge) != 32:
         raise ValueError("Challenge must be exactly 32 bytes.")
     if type(expires) is not int or expires <= 0:
         raise ValueError("Invalid expiration timestamp.")
+    if not isinstance(code_a, str) or not code_a.strip():
+        raise ValueError("Access code A is required.")
+    code_a_h = hash_code_a(code_a)
     extra = json.dumps(
         {
             "version" : 2,
