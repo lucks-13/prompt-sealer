@@ -45,10 +45,11 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
         challenge = roll_seed()
         expires = int(time.time()) + 3600
         p_key = derive_prompt_key(machine_secret, file_id)
-        code_a = make_code_a()
-        seal_file(source, dest, p_key, file_id, expires, challenge, code_a)
+        seal_file(source, dest, p_key, file_id, expires, challenge)
         typer.echo(f"Prompt sealed : {dest}")
-        typer.echo(f"Access Code A : {code_a}")
+        typer.echo("")
+        typer.echo("Share this sealed file with Ai :")
+        typer.echo(f"File : {dest.resolve()}")
     except FileNotFoundError as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)

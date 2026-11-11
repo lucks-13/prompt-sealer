@@ -120,7 +120,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         record = json.loads(blob.decode("utf-8"))
         if not isinstance(record, dict):
             raise ValueError
-        if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash" ,"nonce", "ciphertext"}:
+        if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash", "bootstrap", "nonce", "ciphertext"}:
             raise ValueError
         if record["version"] != 2 or type(record["version"]) is not int:
             raise ValueError
@@ -131,6 +131,8 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         if not isinstance(record["challenge"], str) or len(bytes.fromhex(record["challenge"])) != 32:
             raise ValueError
         if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
+            raise ValueError
+        if record["bootstrap"] != Ai_bootstrap:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
