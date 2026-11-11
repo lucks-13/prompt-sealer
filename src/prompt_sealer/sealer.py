@@ -80,7 +80,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
     }
-    return json.dumps(record).encode("utf-8")
+    return json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
 
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     try:
