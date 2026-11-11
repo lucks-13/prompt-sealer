@@ -1,4 +1,5 @@
 import hmac
+import hashlib
 import json
 import secrets
 import time
@@ -53,6 +54,8 @@ def make_code_b() -> str:
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
+def verify_code_a (code_a)
+
 def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
         raise ValueError("Invalid prompt key.")
@@ -98,7 +101,7 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("code_b"), str) or not isinstance(entry.get("expires"), int):
         raise ValueError("Authorization is invalid.")
-    if not isinstance(entry.get("prompt_key"), str):
+    if not isinstance(entry.get("prompt_key"), (str, type(None))):
         raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("used"), bool):
         raise ValueError("Authorization is invalid.")
