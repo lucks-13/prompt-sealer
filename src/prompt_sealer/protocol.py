@@ -1,6 +1,8 @@
 import hashlib
 import hmac
 import json
+import os
+import tempfile
 import time
 from pathlib import Path
 from prompt_sealer.sealer import make_code_a, attach_code_b, unwrap_p_key, unseal_prompt
