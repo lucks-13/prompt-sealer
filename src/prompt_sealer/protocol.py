@@ -181,6 +181,15 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     entry["used"] = True
     record["wrapped_key"] = None
     consumed = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
-    old_source = 
-    state_path.write_bytes(json.dumps(state, separators=(",",":")).encode("utf-8"))
+    old_source = source.read_bytes()
+    old_state = json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8")
+    try:
+        write_atomic(source, consumed)
+        write_atomic(state_path, old_state.replace(b'"used" : false', b'"used" : true'))
+    except Exception:
+        try :
+            write_atomic(source, old_source)
+        except Exception:
+            pass
+        raise
     return plaintext
