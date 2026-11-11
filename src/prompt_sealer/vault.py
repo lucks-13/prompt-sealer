@@ -37,9 +37,9 @@ def bring_badge(blob : bytes) -> Ed25519PrivateKey:
         raise ValueError("Invalid signing key.")
     return Ed25519PrivateKey.from_private_bytes(key_data)
 
-def write_cache(data : bytes, path : Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(data)
+# def write_cache(data : bytes, path : Path) -> None:
+#     path.parent.mkdir(parents=True, exist_ok=True)
+#     path.write_bytes(data)
 
 def fetch_store (location : Path) -> bytes:
     if not location.exists():
@@ -66,8 +66,8 @@ def create_vault() -> bytes:
 def init_vault(location : Path) -> None:
     if location.exists():
         raise FileExistsError("Vault already exists.")
-    vault_data = create_vault()
-    write_cache(vault_data, location)
+    location.parent.mkdir(parents=True, exist_ok=True)
+    location.write_bytes(create_vault())
 
 def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey, bytes]:
     try:
