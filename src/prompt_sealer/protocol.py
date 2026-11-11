@@ -35,7 +35,6 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
             raise ValueError
-        
         if len(bytes.fromhex(record["nonce"])) != 12:
             raise ValueError
         if not bytes.fromhex(record["ciphertext"]):
@@ -80,7 +79,6 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path
         except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
             raise ValueError("Authorization state is invalid.") from None
     state[file_id.hex()] = {
-        "code_a" : code_a.strip().upper(),
         "code_b" : code_b,
         "prompt_key" : prompt_key.hex(),
         "expires" : record["expires"],
