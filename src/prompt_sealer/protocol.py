@@ -74,7 +74,21 @@ def verify_code_a (code_a : str, challenge : bytes) -> bool:
     exp_h = make_code_a(challenge)
     return hmac.compare_digest(code_a.strip().upper(), exp_h)
 
-def write_atomic(source : Path, data : B)
+def write_atomic(source : Path, data : bytes) -> None:
+    source.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp_name = tempfile.mkdtemp(prefix=f".{source.name}.", dir=source.parent)
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(data)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temp_name, source)
+    except Exception:
+        try:
+            os.unlink(temp_name)
+        except FileNotFoundError:
+            pass
+
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
