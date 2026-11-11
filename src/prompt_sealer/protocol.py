@@ -98,8 +98,9 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
             state = json.loads(state_path.read_bytes().decode("utf-8"))
             if not isinstance(state,dict):
                 raise ValueError
-        except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
-            raise ValueError("Authorization state is invalid.") from None
+            entry = state[file_id]
+        except (UnicodeDecodeError, json.JSONDecodeError,KeyError, TypeError, ValueError):
+            raise ValueError("No Authorization exists.") from None
     state[file_id.hex()] = {
         "code_b_hash" : hashlib.sha256(code_b.encode("utf-8")).hexdigest(),
         "expires" : record["expires"],
@@ -143,7 +144,7 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     try:
         p_key = unwrap_p_key(wrap_key, code_b, bytes.fromhex(file_id))
         plaintext = unseal_prompt(source.read_bytes(), p_key)
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         raise ValueError("Invalid access code.") from None
     entry["used"] = True
     state_path.write_bytes(json.dumps(state, separators=(",",":")).encode("utf-8"))
