@@ -135,7 +135,19 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
         "used" : False
     }
     sealed_b = source.read_bytes()
-    
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        write_atomic(source, sealed)
+        write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
+    except Exception:
+        try:
+            write_atomic(source, sealed_b)
+        except Exception:
+            pass
+        
+
+
+
     source.write_bytes(sealed)
     state = {}
     if state_path.exists():
