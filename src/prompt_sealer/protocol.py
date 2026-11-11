@@ -86,8 +86,6 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path
 def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     record = read_sealed(source)
     file_id = record["file_id"]
-    if not isinstance(file_id, str) or len(bytes.fromhex(file_id)) != 32:
-        raise ValueError("Prompt file is invalid.")
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
     if not state_path.exists():
@@ -101,6 +99,8 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("code_b"), str) or not isinstance(entry.get("expires"), int):
         raise ValueError("Authorization is invalid.")
+    if not isinstance(entry.get("prompt_key"), str):
+        raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("used"), bool):
         raise ValueError("Authorization is invalid.")
     if entry["used"]:
@@ -109,6 +109,12 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Authorization has expired.")
     if not hmac.compare_digest(code_b.strip().upper(), entry["code_b"]):
         raise ValueError("Invalid access code.")
+    try:
+        key = bytes.fromhex(entry["prompt_key"])
+    except ValueError:
+        raise ValueError()
+    
+    
     key = derive_prompt_key(machine_secret, bytes.fromhex(file_id))
     plaintext = unseal_prompt(source.read_bytes(), key)
     entry["used"] = True
