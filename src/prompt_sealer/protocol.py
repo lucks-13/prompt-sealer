@@ -42,7 +42,7 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
-        if len(nonce) != 12 or not ciphertext:
+        if len(nonce) != 12 or len(ciphertext) < 16:
             raise ValueError
         if record["wrapped_key"] is not None:
             wrap_key = bytes.fromhex(record["wrapped_key"])
@@ -73,6 +73,8 @@ def check_expire(expires : int) -> bool:
 def verify_code_a (code_a : str, challenge : bytes) -> bool:
     exp_h = make_code_a(challenge)
     return hmac.compare_digest(code_a.strip().upper(), exp_h)
+
+def write_atomic(source : Path, data : B)
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
