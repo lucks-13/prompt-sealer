@@ -97,5 +97,3 @@ def destroy_vault(location : Path) -> None:
     if not location.is_file():
         raise ValueError("Vault path must be a file.")
     location.unlink()
-
-
