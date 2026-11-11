@@ -144,7 +144,8 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
                 "file_id" : record["file_id"],
                 "expires" : record["expires"],
                 "challenge" : record["challenge"],
-                "code_a_hash" : record["code_a_hash"]
+                "code_a_hash" : record["code_a_hash"],
+                "bootstrap" : record["bootstrap"]
             },
             sort_keys=True,
             separators=(",", ":")

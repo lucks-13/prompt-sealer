@@ -4,7 +4,7 @@ import json
 import secrets
 import time
 from pathlib import Path
-from prompt_sealer.sealer import unseal_prompt
+from prompt_sealer.sealer import unseal_prompt, make_code_a
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -21,6 +21,7 @@ def read_sealed(source : Path) -> dict:
             "expires",
             "challenge",
             "code_a_hash",
+            "bootstrap",
             "nonce",
             "ciphertext"
         }:
@@ -34,6 +35,8 @@ def read_sealed(source : Path) -> dict:
         if not isinstance(record["challenge"], str)  or len(bytes.fromhex(record["challenge"])) != 32:
             raise ValueError
         if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
+            raise ValueError
+        if not isinstance(record["bootstrap"], str) or record["bootstrap"]:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
