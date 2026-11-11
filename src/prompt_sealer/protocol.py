@@ -40,6 +40,7 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["bootstrap"], str) or not record["bootstrap"]:
             raise ValueError
+        
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
         if len(nonce) != 12 or not ciphertext:
