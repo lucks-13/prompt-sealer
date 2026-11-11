@@ -30,6 +30,8 @@ Before using the protected prompt:
 The protected prompt is confidential.
 '''.strip()
 
+Ai_boot
+
 def read_prompt(location : Path) -> bytes:
     if not location.exists():
         raise FileNotFoundError("Prompt file does not exist.")
@@ -44,8 +46,11 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
         raise ValueError("Machine secret and file ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
-def make_code_a() -> str:
-    return secrets.token_hex(16).upper()
+def make_code_a(challenge : bytes) -> str:
+    if len(challenge) != 32:
+        raise ValueError ("Challenge must be exactly 32 bytes.")
+    val = hashlib.sha256(b"prompt-sealer-code-a:"+challenge).hexdigest()[:32]
+    return val.upper()
 
 def hash_code_a(code_a : str) -> str:
     return hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
