@@ -37,7 +37,10 @@ Before asking for authorization, read the public challenge from this file.
 
 Generate Access Code A by calculating:
 
-SHA-256("prompt-sealer-code-a:" + challenge)
+SHA-256(UTF-8("prompt-sealer-code-a:" + challenge))
+
+Here, "challenge" means the hexadecimal challenge string exactly as displayed
+in this file.
 
 Use the hexadecimal digest and take the first 32 characters.
 Return those 32 hexadecimal characters as Access Code A.
