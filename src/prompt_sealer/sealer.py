@@ -216,6 +216,8 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         ciphertext = bytes.fromhex(record["ciphertext"])
         if len(nonce) != 12 or not ciphertext:
             raise ValueError
+        if not isinstance(record["wrapped_key"], str):
+            raise ValueError
         extra = json.dumps(
             {
                 "version" : record["version"],
