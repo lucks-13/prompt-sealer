@@ -88,6 +88,17 @@ def write_atomic(source : Path, data : bytes) -> None:
             os.unlink(temp_name)
         except FileNotFoundError:
             pass
+        raise
+
+def read_state(state_path : Path) -> dict:
+    if not state_path.exists():
+        return {}
+    try:
+        state = json.loads(state_path.read_bytes().decode("utf-8"))
+        if not isinstance(state, dict):
+            raise ValueError
+        return state
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError)
 
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
