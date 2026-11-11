@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 import json
 from pathlib import Path
 from prompt_sealer.crypto import seal_text, unseal_text
@@ -41,6 +43,12 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
     if len(machine_secret) != 32 or len(file_id) != 32:
         raise ValueError("Machine secret and file ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
+
+def make_code_a() -> str:
+    return secrets.token_hex(16).upper()
+
+def hash_code_a(code_a : str) -> str:
+    return hashlib.sha256(code_a.strip().)
 
 def payload(prompt : bytes) -> bytes:
     if not isinstance(prompt, bytes):
