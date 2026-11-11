@@ -35,6 +35,7 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
             raise ValueError
+        
         if len(bytes.fromhex(record["nonce"])) != 12:
             raise ValueError
         if not bytes.fromhex(record["ciphertext"]):
@@ -43,6 +44,7 @@ def read_sealed(source : Path) -> dict:
         bytes.fromhex(record["challenge"])
         bytes.fromhex(record["nonce"])
         bytes.fromhex(record["ciphertext"])
+        bytes.fromhex(record["code_a_hash"])
 
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
