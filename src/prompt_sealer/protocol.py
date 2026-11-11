@@ -3,7 +3,7 @@ import hmac
 import json
 import time
 from pathlib import Path
-from prompt_sealer.sealer import make_code_a, attach_code_b, derive_prompt_key, read_prompt, unwrap_p_key, unseal_prompt
+from prompt_sealer.sealer import make_code_a, attach_code_b, derive_prompt_key, unwrap_p_key, unseal_prompt
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -44,8 +44,8 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if record["wrapped_key"] is not None:
             wrap_key = bytes.fromhex(record["wrapped_key"])
-        if len(wrap_key) <= 12:
-            raise ValueError
+            if len(wrap_key) <= 12:
+                raise ValueError
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
@@ -74,7 +74,7 @@ def verify_code_a (code_a : str, challenge : bytes) -> bool:
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
-        raise ValueError("Invalid prompt key.")
+        raise ValueError("Invalid machine secret.")
     if len(file_id) != 32:
         raise ValueError("Invalid File ID.")
     record = read_sealed(source)
@@ -146,13 +146,5 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     except ValueError, TypeError:
         raise ValueError("Invalid access code.") from None
     entry["used"] = True
-    
-
-
-    if len(key) != 32:
-        raise ValueError("Authorization is invalid.")
-    plaintext = unseal_prompt(source.read_bytes(), key)
-    entry["used"] = True
-    entry["prompt_key"] = None
     state_path.write_bytes(json.dumps(state, separators=(",",":")).encode("utf-8"))
     return plaintext
