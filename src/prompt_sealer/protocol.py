@@ -44,16 +44,26 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if record["wrapped_key"] is not None:
             wrap_key = bytes.fromhex(record["wrapped_key"])
-        if len(wrap_key) <=
-        
-        if not ciphertext:
+        if len(wrap_key) <= 12:
             raise ValueError
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
 
-def make_code_b() -> str:
-    return secrets.token_hex(16).upper()
+def make_code_b(code_a : str, machine : bytes, file_id : bytes) -> str:
+    if not isinstance(code_a, str):
+        raise TypeError("Code A must be a string.")
+    if len(machine) != 32:
+        raise ValueError("Machine secret must be exactly 32 bytes.")
+    if len(file_id) != 32:
+        raise ValueError("File ID must be exactly 32 bytes.")
+    message = (
+        b"prompt-sealer-code-b:"
+        + code_a.strip().upper().encode("utf-8")
+        +     
+    )
+
+
 
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
