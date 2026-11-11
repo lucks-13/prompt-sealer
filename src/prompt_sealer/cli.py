@@ -44,8 +44,10 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
         challenge = roll_seed()
         expires = int(time.time()) + 3600
         p_key = derive_prompt_key(machine_secret, file_id)
-        seal_file(source, dest, p_key, file_id, expires, challenge)
+        code_a = make_code_a()
+        seal_file(source, dest, p_key, file_id, expires, challenge, code_a)
         typer.echo(f"Prompt sealed : {dest}")
+        typer.echo(f"Access Code A : {code_a}")
     except FileNotFoundError as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)
@@ -57,6 +59,7 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
 def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_a : str = typer.Argument(..., help="Access code A.")):
     try:
         _, _, machine_secret = open_vault(vault_path)
+        file_
         code_b = authorize(source, machine_secret, code_a, state_path)
         typer.echo(f"Access Code B : {code_b}")
     except (FileNotFoundError, ValueError) as error:
