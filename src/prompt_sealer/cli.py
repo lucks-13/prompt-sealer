@@ -60,10 +60,9 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
 def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_a : str = typer.Argument(..., help="Access code A.")):
     try:
         _, _, machine_secret = open_vault(vault_path)
-        
-        file_id = bytes.fromhex(json.loads(source.read_bytes().decode("utf-8"))["file_id"])
-        p_key = derive_prompt_key(machine_secret, file_id)
-        code_b = authorize(source, code_a, p_key, state_path)
+        record = json.loads(source.read_bytes().decode("utf-8"))
+        file_id = bytes.fromhex(record["file_id"])
+        code_b = authorize(source, code_a, machine_secret, file_id, state_path)
         typer.echo(f"Access Code B : {code_b}")
     except (FileNotFoundError, ValueError) as error:
         typer.echo(str(error))
