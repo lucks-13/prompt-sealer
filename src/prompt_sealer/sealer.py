@@ -98,7 +98,7 @@ def wrap_p_key(p_key : bytes, code_b : str, file_id : bytes) -> bytes:
 def unwrap_p_key(w_key : bytes, code_b : str, file_id : bytes) -> bytes:
     if len(file_id) !=32:
         raise ValueError("File ID must be exactly 32 bytes.")
-    if len(w_key) < 12:
+    if len(w_key) <= 12:
         raise ValueError("Wrapped prompt key is invalid.")
     wrap_key = derive_code_b(code_b, file_id)
     nonce = w_key[:12]
