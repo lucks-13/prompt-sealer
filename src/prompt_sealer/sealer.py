@@ -77,6 +77,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
             "file_id" : file_id.hex(),
             "expires" : expires,
             "challenge" : challenge.hex(),
+            "code_a_hash" : code_a_h,
         },
         sort_keys=True,
         separators=(",", ":"),
@@ -88,6 +89,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         "file_id" : file_id.hex(),
         "expires" : expires,
         "challenge" : challenge.hex(),
+        "code_a_hash" : code_a_h,
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
     }
@@ -98,7 +100,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         record = json.loads(blob.decode("utf-8"))
         if not isinstance(record, dict):
             raise ValueError
-        if set(record) != {"version", "file_id", "expires", "challenge", "nonce", "ciphertext"}:
+        if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash" ,"nonce", "ciphertext"}:
             raise ValueError
         if record["version"] != 2 or type(record["version"]) is not int:
             raise ValueError
