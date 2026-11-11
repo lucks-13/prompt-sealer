@@ -45,7 +45,7 @@ def read_sealed(source : Path) -> dict:
         raise ValueError("Prompt file is invalid.") from None
 
 def make_code_a() -> str:
-    return secrets.
+    return secrets.token_hex(6).upper()
 
 def verify_code_a(code_a : str, exp : str) -> bool:
     return hmac.compare_digest(code_a.strip().upper(), exp.strip().upper())
@@ -56,14 +56,13 @@ def make_code_b() -> str:
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
-def authorize(source : Path, machine_secret : bytes, code_a : str, state_path : Path) -> str:
+def authorize(source : Path, code_a : str, state_path : Path) -> str:
     record = read_sealed(source)
     file_id = bytes.fromhex(record["file_id"])
-    challenge = bytes.fromhex(record["challenge"])
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
-    if not verify_code_a(machine_secret, file_id, challenge, code_a):
-        raise ValueError("Invalid access code.")
+    if not code_a.strip():
+        raise 
     code_b = make_code_b()
     state = {}
     if state_path.exists():
