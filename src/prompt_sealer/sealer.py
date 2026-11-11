@@ -85,7 +85,12 @@ def derive_code_b(code_b : str, file_id : bytes) -> bytes:
         raise TypeError("Code B must be a string.")
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
-    return HKDF(algorithm=)
+    return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-code-b-wrap").derive(code_b.strip().upper().encode("utf-8"))
+
+def wrap_p_key(p_key : bytes, code_b : str, file_iid : bytes) -> bytes:
+    if len(p_key) != 32:
+        raise ValueError("Prompt key must be exactly 32 bytes.")
+    wrap_key = derive_prompt_key(code_b, file_id=)
 
 def make_code_a(challenge : bytes) -> str:
     if len(challenge) != 32:
