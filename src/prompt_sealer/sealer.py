@@ -90,7 +90,7 @@ def derive_code_b(code_b : str, file_id : bytes) -> bytes:
 def wrap_p_key(p_key : bytes, code_b : str, file_id : bytes) -> bytes:
     if len(p_key) != 32:
         raise ValueError("Prompt key must be exactly 32 bytes.")
-    wrap_key = derive_prompt_key(code_b, file_id)
+    wrap_key = derive_code_b(code_b, file_id)
     nonce, ciphertext = seal_text(p_key, wrap_key, file_id)
     return nonce + ciphertext
 
