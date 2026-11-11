@@ -30,7 +30,7 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
-        if not isinstance(record["expires"], int):
+        if not isinstance(record["expires"], int) or record["expires"] <= 0:
             raise ValueError
         if not isinstance(record["challenge"], str)  or len(bytes.fromhex(record["challenge"])) != 32:
             raise ValueError
@@ -40,8 +40,12 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
-        if len(nonce) != 12:
+        if len(nonce) != 12 or not ciphertext:
             raise ValueError
+        if record["wrapped_key"] is not None:
+            wrap_key = bytes.fromhex(record["wrapped_key"])
+        if len(wrap_key) <=
+        
         if not ciphertext:
             raise ValueError
         return record
