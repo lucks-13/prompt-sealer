@@ -65,8 +65,9 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path
     file_id = bytes.fromhex(record["file_id"])
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
-    if not code_a.strip():
-        raise ValueError("Access code is required.")
+    code_a_h = record["code_a_hash"]
+    if not verify_code_a(code_a, code_a_h):
+        raise ValueError("Invalid access code.")
     code_b = make_code_b()
     state = {}
     if state_path.exists():
