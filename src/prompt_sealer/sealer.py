@@ -141,7 +141,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
     code_a_h = hash_code_a(code_a)
     extra = json.dumps(
         {
-            "version" : 2,
+            "version" : 1,
             "file_id" : file_id.hex(),
             "expires" : expires,
             "challenge" : challenge.hex(),
@@ -154,7 +154,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
     pl = payload(prompt)
     nonce, ciphertext = seal_text(pl, key, extra)
     record = {
-        "version" : 2,
+        "version" : 1,
         "file_id" : file_id.hex(),
         "expires" : expires,
         "challenge" : challenge.hex(),
@@ -184,7 +184,7 @@ def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
             "wrapped_key"
         }:
             raise ValueError
-        if record["version"] != 2:
+        if record["version"] != 1:
             raise ValueError
         file_id = bytes.fromhex(record["file_id"])
         wrap_key = wrap_p_key(p_key, code_b, file_id)
@@ -200,7 +200,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash", "bootstrap", "nonce", "ciphertext", "wrapped_key"}:
             raise ValueError
-        if record["version"] != 2 or type(record["version"]) is not int:
+        if record["version"] != 1 or type(record["version"]) is not int:
             raise ValueError
         if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
