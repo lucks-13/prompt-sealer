@@ -1,5 +1,4 @@
 import hmac
-import hashlib
 import json
 import secrets
 import time
@@ -54,9 +53,9 @@ def make_code_b() -> str:
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
-def verify_code_a (code_a : str, exp_h : str) -> bool:
-    val = hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
-    return hmac.compare_digest(val, exp_h)
+def verify_code_a (code_a : str, challenge : bytes) -> bool:
+    exp_h = make_code_a(challenge)
+    return hmac.compare_digest(code_a.strip().upper(), exp_h)
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
@@ -65,7 +64,8 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path
     file_id = bytes.fromhex(record["file_id"])
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
-    if not verify_code_a(code_a, record["code_a_hash"]):
+    challenge = bytes.fromhex(record["challenge"])
+    if not verify_code_a(code_a, challenge):
         raise ValueError("Invalid access code.")
     code_b = make_code_b()
     state = {}
