@@ -144,26 +144,8 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
             write_atomic(source, sealed_b)
         except Exception:
             pass
-        
-
-
-
-    source.write_bytes(sealed)
-    state = {}
-    if state_path.exists():
-        try:
-            state = json.loads(state_path.read_bytes().decode("utf-8"))
-            if not isinstance(state,dict):
-                raise ValueError
-        except (UnicodeDecodeError, json.JSONDecodeError,KeyError, TypeError, ValueError):
-            raise ValueError("No Authorization exists.") from None
-    state[file_id.hex()] = {
-        "code_b_hash" : hashlib.sha256(code_b.encode("utf-8")).hexdigest(),
-        "expires" : record["expires"],
-        "used" : False,
-    }
-    state_path.parent.mkdir(parents=True, exist_ok=True)
-    state_path.write_bytes(json.dumps(state, separators=(",", ":")).encode("utf-8"))
+        state.pop(file_id_hex, None)
+        raise
     return code_b
 
 def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
@@ -173,6 +155,10 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Prompt file has expired.")
     if record["wrapped_key"] is None:
         raise ValueError("Prompt has not been authorized.")
+    state = read_state(state_path)
+    entry = state.get(file_id)
+    
+    
     if not state_path.exists():
         raise ValueError("No authorization exists.")
     try:
