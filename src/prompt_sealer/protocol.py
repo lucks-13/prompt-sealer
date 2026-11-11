@@ -36,8 +36,11 @@ def read_sealed(source : Path) -> dict:
         if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
-        ciphertext = bytes.fromhex()
-
+        ciphertext = bytes.fromhex(record["ciphertext"])
+        if len(nonce) != 12:
+            raise ValueError
+        if not ciphertext:
+            raise ValueError
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
@@ -59,8 +62,7 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path
     file_id = bytes.fromhex(record["file_id"])
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
-    code_a_h = record["code_a_hash"]
-    if not verify_code_a(code_a, code_a_h):
+    if not verify_code_a(code_a, record["code_a_hash"]):
         raise ValueError("Invalid access code.")
     code_b = make_code_b()
     state = {}
