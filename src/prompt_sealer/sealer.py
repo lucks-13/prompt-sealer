@@ -1,8 +1,7 @@
 import hashlib
-import secrets
 import json
 from pathlib import Path
-from prompt_sealer.crypto import seal_text, unseal_text, roll_seed
+from prompt_sealer.crypto import seal_text, unseal_text
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
