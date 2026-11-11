@@ -189,14 +189,16 @@ def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
         file_id = bytes.fromhex(record["file_id"])
         wrap_key = wrap_p_key(p_key, code_b, file_id)
         record["wrapped_key"] = wrap_key.hex()
-        return 
+        return json.dumps(record, sort_keys=True, separators=("," ,":")).encode("utf-8")
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
+        raise ValueError("Prompt file is invalid.") from None
 
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     try:
         record = json.loads(blob.decode("utf-8"))
         if not isinstance(record, dict):
             raise ValueError
-        if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash", "bootstrap", "nonce", "ciphertext"}:
+        if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash", "bootstrap", "nonce", "ciphertext", "wrapped_key"}:
             raise ValueError
         if record["version"] != 2 or type(record["version"]) is not int:
             raise ValueError
