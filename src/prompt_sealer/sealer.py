@@ -129,6 +129,8 @@ def payload(prompt : bytes) -> bytes:
     )
 
 def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
+    if len(key) != 32:
+        raise ValueError("Prompt key must be exactly 32 bytes.")
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
     if len(challenge) != 32:
@@ -160,9 +162,13 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         "bootstrap" : Ai_bootstrap,
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
+        "wrapped_key" : None
     }
 
     return json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
+
+def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
+        
 
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     try:
