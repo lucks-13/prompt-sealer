@@ -1,6 +1,6 @@
 import typer
 from pathlib import Path
-from prompt_sealer.sealer import derive_prompt_key, make_code_a, seal_file
+from prompt_sealer.sealer import derive_prompt_key, seal_file
 from prompt_sealer.vault import init_vault, check_vault,destroy_vault, open_vault
 from prompt_sealer.crypto import roll_seed
 from prompt_sealer.protocol import authorize, redeem
