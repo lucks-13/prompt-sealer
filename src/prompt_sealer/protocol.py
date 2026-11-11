@@ -3,7 +3,7 @@ import json
 import secrets
 import time
 from pathlib import Path
-from prompt_sealer.sealer import unseal_prompt, make_code_a
+from prompt_sealer.sealer import make_code_a
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
