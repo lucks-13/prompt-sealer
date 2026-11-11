@@ -3,7 +3,7 @@ import hmac
 import json
 import time
 from pathlib import Path
-from prompt_sealer.sealer import make_code_a, attach_code_b, derive_prompt_key, unwrap_p_key, unseal_prompt
+from prompt_sealer.sealer import make_code_a, attach_code_b, unwrap_p_key, unseal_prompt
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -74,7 +74,7 @@ def verify_code_a (code_a : str, challenge : bytes) -> bool:
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
-        raise ValueError("Invalid machine secret.")
+        raise ValueError("Invalid prompt key.")
     if len(file_id) != 32:
         raise ValueError("Invalid File ID.")
     record = read_sealed(source)
@@ -88,9 +88,8 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
         raise ValueError("Invalid access code.")
     if record["wrapped_key"] is not None:
         raise ValueError("Prompt has already been authorized.")
-    p_key = derive_prompt_key(prompt_key, file_id)
     code_b = make_code_b(code_a, prompt_key, file_id)
-    sealed = attach_code_b(source.read_bytes(), p_key, code_b)
+    sealed = attach_code_b(source.read_bytes(), prompt_key, code_b)
     source.write_bytes(sealed)
     state = {}
     if state_path.exists():

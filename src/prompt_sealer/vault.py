@@ -16,7 +16,7 @@ def unlock_record(blob : bytes) -> bytes:
         return result[1]
     except (pywintypes.error, TypeError, ValueError):
         raise ValueError("Unable to decrypt protected data.") from None
-
+    
 def tuck_away(vault_key : X25519PrivateKey) -> bytes:
     key_bytes = vault_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return seal_blob(key_bytes)
