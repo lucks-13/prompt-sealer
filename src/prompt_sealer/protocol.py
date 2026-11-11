@@ -125,9 +125,10 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("No authorization exists.") from None
     if not isinstance(entry, dict):
         raise ValueError("Authorization is invalid.")
-    if not isinstance(entry.get("code_b"), str) or not isinstance(entry.get("expires"), int):
+    if not isinstance(entry.get("code_b_hash"), str) or len(entry["code_b_hash"]) != 64:
         raise ValueError("Authorization is invalid.")
-    if not isinstance(entry.get("prompt_key"), (str, type(None))):
+
+    if not isinstance(entry.get("expires"), int):
         raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("used"), bool):
         raise ValueError("Authorization is invalid.")
@@ -135,6 +136,10 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Access code has already been used.")
     if int(time.time()) >= entry["expires"]:
         raise ValueError("Authorization has expired.")
+    code_b_hash = hashlib.sha256(code_b.strip().upper())
+
+
+    
     if not hmac.compare_digest(code_b.strip().upper(), entry["code_b"]):
         raise ValueError("Invalid access code.")
     try:
