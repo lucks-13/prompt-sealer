@@ -98,7 +98,6 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
             state = json.loads(state_path.read_bytes().decode("utf-8"))
             if not isinstance(state,dict):
                 raise ValueError
-            entry = state[file_id]
         except (UnicodeDecodeError, json.JSONDecodeError,KeyError, TypeError, ValueError):
             raise ValueError("No Authorization exists.") from None
     state[file_id.hex()] = {
