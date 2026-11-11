@@ -110,6 +110,8 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         if not isinstance(record["challenge"], str) or len(bytes.fromhex(record["challenge"])) != 32:
             raise ValueError
+        if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
+            raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
         if len(nonce) != 12 or not ciphertext:
