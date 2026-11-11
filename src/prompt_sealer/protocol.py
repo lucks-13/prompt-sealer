@@ -56,13 +56,13 @@ def make_code_b() -> str:
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
-def authorize(source : Path, code_a : str, state_path : Path) -> str:
+def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path) -> str:
     record = read_sealed(source)
     file_id = bytes.fromhex(record["file_id"])
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
     if not code_a.strip():
-        raise 
+        raise ValueError("Access code is required.")
     code_b = make_code_b()
     state = {}
     if state_path.exists():
@@ -73,7 +73,9 @@ def authorize(source : Path, code_a : str, state_path : Path) -> str:
         except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
             raise ValueError("Authorization state is invalid.") from None
     state[file_id.hex()] = {
+        "code_a" : code_a.strip().upper(),
         "code_b" : code_b,
+        "prompt_key" : prompt_key.hex(),
         "expires" : record["expires"],
         "used" : False,
     }
@@ -81,7 +83,7 @@ def authorize(source : Path, code_a : str, state_path : Path) -> str:
     state_path.write_bytes(json.dumps(state, separators=(",", ":")).encode("utf-8"))
     return code_b
 
-def redeem(source : Path, machine_secret : bytes, code_b : str, state_path : Path) -> bytes:
+def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     record = read_sealed(source)
     file_id = record["file_id"]
     if not isinstance(file_id, str) or len(bytes.fromhex(file_id)) != 32:
