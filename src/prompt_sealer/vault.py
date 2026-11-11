@@ -14,7 +14,7 @@ def unlock_record(blob : bytes) -> bytes:
     try:
         result = win32crypt.CryptUnprotectData(blob, None, None, None, 0)
         return result[1]
-    except pywintypes.error:
+    except pywintypes.error, TypeError, ValueError:
         raise ValueError("Unable to decrypt protected data.") from None
 
 def tuck_away(vault_key : X25519PrivateKey) -> bytes:
@@ -36,10 +36,6 @@ def bring_badge(blob : bytes) -> Ed25519PrivateKey:
     if len(key_data) != 32:
         raise ValueError("Invalid signing key.")
     return Ed25519PrivateKey.from_private_bytes(key_data)
-
-# def write_cache(data : bytes, path : Path) -> None:
-#     path.parent.mkdir(parents=True, exist_ok=True)
-#     path.write_bytes(data)
 
 def fetch_store (location : Path) -> bytes:
     if not location.exists():
