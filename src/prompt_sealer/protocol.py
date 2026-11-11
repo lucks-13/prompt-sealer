@@ -54,7 +54,9 @@ def make_code_b() -> str:
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
-def verify_code_a (code_a)
+def verify_code_a (code_a : str, exp_h : str) -> bool:
+    val = hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
+    return hmac.compare_digest(val, exp_h)
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
