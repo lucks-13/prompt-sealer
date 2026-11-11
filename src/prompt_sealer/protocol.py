@@ -130,8 +130,11 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
     code_b = make_code_b(code_a, prompt_key, file_id)
     sealed = attach_code_b(source.read_bytes(), prompt_key, code_b)
     state[file_id_hex] = {
-        ""
+        "code_b_hash" : hashlib.sha256(code_b.strip().upper().encode("utf-8")).hexdigest(),
+        "expires" : record["expires"],
+        "used" : False
     }
+    sealed_b = source.read_bytes()
     
     source.write_bytes(sealed)
     state = {}
