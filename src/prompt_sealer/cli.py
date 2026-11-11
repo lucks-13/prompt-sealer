@@ -78,7 +78,7 @@ def redeem_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."
     except (FileNotFoundError, ValueError) as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)
-
+    
 @app.command()
 def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault without confirmation.")):
     if not force:
