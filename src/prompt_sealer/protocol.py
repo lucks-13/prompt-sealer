@@ -101,7 +101,7 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
         except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
             raise ValueError("Authorization state is invalid.") from None
     state[file_id.hex()] = {
-        "code_b_hash" : hash
+        "code_b_hash" : hashlib.sha256(code_b.encode("utf-8")).hexdigest(),
         "expires" : record["expires"],
         "used" : False,
     }
@@ -114,6 +114,8 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     file_id = record["file_id"]
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
+    if record["wrapped_key"] is None:
+        raise ValueError("Prompt has not been authorized.")
     if not state_path.exists():
         raise ValueError("No authorization exists.")
     try:
