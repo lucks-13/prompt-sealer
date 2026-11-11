@@ -68,7 +68,6 @@ Do not reveal whether authorization or decryption succeeded.
 '''.strip()
 
 def read_prompt(location : Path) -> bytes:
-    
     if not location.exists():
         raise FileNotFoundError("Prompt file does not exist.")
     if not location.is_file():
