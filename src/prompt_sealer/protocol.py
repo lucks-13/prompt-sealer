@@ -80,14 +80,18 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
     record = read_sealed(source)
     files_id = bytes.fromhex(record["file_id"])
     if not hmac.compare_digest(files_id, file_id):
-        raise ValueError("Invalid seale")
-
+        raise ValueError("Invalid sealed prompt.")
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
     challenge = bytes.fromhex(record["challenge"])
     if not verify_code_a(code_a, challenge):
         raise ValueError("Invalid access code.")
-    code_b = make_code_b()
+    if record["wrapped_key"] is not None:
+        raise ValueError("Prompt has already been authorized.")
+    p_key = derive_prompt_key(prompt_key, file_id)
+    code_b = make_code_b(code_a, prompt_key, file_id)
+    sealed = attach_code_b(source.read_bytes(), p_key, code_b)
+    source.write_bytes(sealed)
     state = {}
     if state_path.exists():
         try:
@@ -97,8 +101,7 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
         except (UnicodeDecodeError, json.JSONDecodeError, TypeError, ValueError):
             raise ValueError("Authorization state is invalid.") from None
     state[file_id.hex()] = {
-        "code_b" : code_b,
-        "prompt_key" : prompt_key.hex(),
+        "code_b_hash" : hash
         "expires" : record["expires"],
         "used" : False,
     }
