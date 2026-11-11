@@ -3,8 +3,7 @@ import json
 import secrets
 import time
 from pathlib import Path
-from prompt_sealer.crypto import forge_lock
-from prompt_sealer.sealer import derive_prompt_key, unseal_prompt
+from prompt_sealer.sealer import unseal_prompt
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -45,14 +44,11 @@ def read_sealed(source : Path) -> dict:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
 
-def make_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes) -> str:
-    proof = forge_lock(machine_secret, file_id, b"prompt-sealer-code-a")
-    data = proof + challenge
-    return hashlib.sha256(data).hexdigest()[:12].upper()
+def make_code_a() -> str:
+    return secrets.
 
-def verify_code_a(machine_secret : bytes, file_id : bytes, challenge : bytes, code : str) -> bool:
-    excepted = make_code_a(machine_secret, file_id, challenge)
-    return hmac.compare_digest(code.strip().upper(), excepted)
+def verify_code_a(code_a : str, exp : str) -> bool:
+    return hmac.compare_digest(code_a.strip().upper(), exp.strip().upper())
 
 def make_code_b() -> str:
     return secrets.token_hex(16).upper()
