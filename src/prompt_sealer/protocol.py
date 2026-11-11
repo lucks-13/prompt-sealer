@@ -124,10 +124,15 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
     file_id_hex = file_id.hex()
     if file_id_hex in state:
         entry = state[file_id_hex]
-        if (isinstance(entry, dict))
-    
+        if (isinstance(entry, dict) and entry.get("used") is True):
+            raise ValueError("Prompt access has already been used.")
+        raise ValueError("Prompt has already been authorized.")
     code_b = make_code_b(code_a, prompt_key, file_id)
     sealed = attach_code_b(source.read_bytes(), prompt_key, code_b)
+    state[file_id_hex] = {
+        ""
+    }
+    
     source.write_bytes(sealed)
     state = {}
     if state_path.exists():
