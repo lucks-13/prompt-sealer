@@ -47,9 +47,6 @@ def read_sealed(source : Path) -> dict:
 def make_code_a() -> str:
     return secrets.token_hex(6).upper()
 
-def verify_code_a(code_a : str, exp : str) -> bool:
-    return hmac.compare_digest(code_a.strip().upper(), exp.strip().upper())
-
 def make_code_b() -> str:
     return secrets.token_hex(16).upper()
 
@@ -57,6 +54,8 @@ def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
 def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path) -> str:
+    if len(prompt_key) != 32:
+        raise ValueError("Invalid prompt key.")
     record = read_sealed(source)
     file_id = bytes.fromhex(record["file_id"])
     if not check_expire(record["expires"]):
