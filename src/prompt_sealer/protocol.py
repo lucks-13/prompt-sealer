@@ -157,20 +157,10 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Prompt has not been authorized.")
     state = read_state(state_path)
     entry = state.get(file_id)
-    
-    
-    if not state_path.exists():
-        raise ValueError("No authorization exists.")
-    try:
-        state = json.loads(state_path.read_bytes().decode("utf-8"))
-        entry = state[file_id]
-    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
-        raise ValueError("No authorization exists.") from None
     if not isinstance(entry, dict):
-        raise ValueError("Authorization is invalid.")
+        raise ValueError("No Authorization exists.")
     if not isinstance(entry.get("code_b_hash"), str) or len(entry["code_b_hash"]) != 64:
         raise ValueError("Authorization is invalid.")
-
     if not isinstance(entry.get("expires"), int):
         raise ValueError("Authorization is invalid.")
     if not isinstance(entry.get("used"), bool):
@@ -179,7 +169,7 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Access code has already been used.")
     if int(time.time()) >= entry["expires"]:
         raise ValueError("Authorization has expired.")
-    code_b_hash = hashlib.sha256(code_b.strip().upper().encode("utf-8")).hexdigest()    
+    code_b_hash = hashlib.sha256(code_b.strip().upper().encode("utf-8")).hexdigest()
     if not hmac.compare_digest(code_b_hash, entry["code_b_hash"]):
         raise ValueError("Invalid access code.")
     wrap_key = bytes.fromhex(record["wrapped_key"])
@@ -189,5 +179,8 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     except (ValueError, TypeError):
         raise ValueError("Invalid access code.") from None
     entry["used"] = True
+    record["wrapped_key"] = None
+    consumed = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
+    old_source = 
     state_path.write_bytes(json.dumps(state, separators=(",",":")).encode("utf-8"))
     return plaintext
