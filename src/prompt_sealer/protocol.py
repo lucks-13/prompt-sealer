@@ -60,10 +60,10 @@ def make_code_b(code_a : str, machine : bytes, file_id : bytes) -> str:
     message = (
         b"prompt-sealer-code-b:"
         + code_a.strip().upper().encode("utf-8")
-        +     
+        + file_id    
     )
-
-
+    value = hmac.new(machine, message, hashlib.sha256).hexdigest()[:32]
+    return value.upper()
 
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
@@ -72,11 +72,16 @@ def verify_code_a (code_a : str, challenge : bytes) -> bool:
     exp_h = make_code_a(challenge)
     return hmac.compare_digest(code_a.strip().upper(), exp_h)
 
-def authorize(source : Path, code_a : str, prompt_key : bytes, state_path : Path) -> str:
+def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
     if len(prompt_key) != 32:
         raise ValueError("Invalid prompt key.")
+    if len(file_id) != 32:
+        raise ValueError("Invalid File ID.")
     record = read_sealed(source)
-    file_id = bytes.fromhex(record["file_id"])
+    files_id = bytes.fromhex(record["file_id"])
+    if not hmac.compare_digest(files_id, file_id):
+        raise ValueError("Invalid seale")
+
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
     challenge = bytes.fromhex(record["challenge"])
