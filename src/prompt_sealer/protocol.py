@@ -23,7 +23,7 @@ def read_sealed(source : Path) -> dict:
             "ciphertext"
         }:
             raise ValueError
-        if record["version"] != 1:
+        if record["version"] != 2:
             raise ValueError
         if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
@@ -112,11 +112,11 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     try:
         key = bytes.fromhex(entry["prompt_key"])
     except ValueError:
-        raise ValueError()
-    
-    
-    key = derive_prompt_key(machine_secret, bytes.fromhex(file_id))
+        raise ValueError("Authorization is invalid.") from None
+    if len(key) != 32:
+        raise ValueError("Authorization is invalid.")
     plaintext = unseal_prompt(source.read_bytes(), key)
     entry["used"] = True
+    entry["prompt_key"] = None
     state_path.write_bytes(json.dumps(state, separators=(",",":")).encode("utf-8"))
     return plaintext
