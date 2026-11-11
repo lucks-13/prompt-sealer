@@ -40,7 +40,6 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if not isinstance(record["bootstrap"], str) or not record["bootstrap"]:
             raise ValueError
-        
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
         if len(nonce) != 12 or not ciphertext:
@@ -52,7 +51,7 @@ def read_sealed(source : Path) -> dict:
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
-
+    
 def make_code_b(code_a : str, machine : bytes, file_id : bytes) -> str:
     if not isinstance(code_a, str):
         raise TypeError("Code A must be a string.")
