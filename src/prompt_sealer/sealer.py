@@ -49,7 +49,7 @@ def payload(prompt : bytes) -> bytes:
     return(
         inst
         + b"\n\n"
-        + b" --- Protected User Prompt --- \n\n"
+        + b"--- Protected User Prompt ---\n\n"
         + prompt
     )
 
@@ -62,7 +62,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         raise ValueError("Invalid expiration timestamp.")
     extra = json.dumps(
         {
-            "version" : 1,
+            "version" : 2,
             "file_id" : file_id.hex(),
             "expires" : expires,
             "challenge" : challenge.hex(),
@@ -70,9 +70,10 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         sort_keys=True,
         separators=(",", ":"),
     ).encode("utf-8")
-    nonce, ciphertext = seal_text(prompt, key, extra)
+    pl = payload(prompt)
+    nonce, ciphertext = seal_text(pl, key, extra)
     record = {
-        "version" : 1,
+        "version" : 2,
         "file_id" : file_id.hex(),
         "expires" : expires,
         "challenge" : challenge.hex(),
@@ -88,7 +89,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         if set(record) != {"version", "file_id", "expires", "challenge", "nonce", "ciphertext"}:
             raise ValueError
-        if record["version"] != 1 or type(record["version"]) is not int:
+        if record["version"] != 2 or type(record["version"]) is not int:
             raise ValueError
         if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
