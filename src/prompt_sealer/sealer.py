@@ -112,12 +112,15 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
             raise ValueError
         nonce = bytes.fromhex(record["nonce"])
         ciphertext = bytes.fromhex(record["ciphertext"])
+        if len(nonce) != 12 or not ciphertext:
+            raise ValueError
         extra = json.dumps(
             {
                 "version" : record["version"],
                 "file_id" : record["file_id"],
                 "expires" : record["expires"],
-                "challenge" : record["challenge"]
+                "challenge" : record["challenge"],
+                "code_a_hash" : record["code_a_hash"]
             },
             sort_keys=True,
             separators=(",", ":")
@@ -127,9 +130,9 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid or cannot be decrypted.") from None
 
-def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> None:
+def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, code_a : str) -> None:
     prompt = read_prompt(source)
-    sealed = seal_prompt(prompt, key, file_id, expires, challenge)
+    sealed = seal_prompt(prompt, key, file_id, expires, challenge, code_a)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(sealed)
 
