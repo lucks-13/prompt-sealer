@@ -136,16 +136,19 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         raise ValueError("Access code has already been used.")
     if int(time.time()) >= entry["expires"]:
         raise ValueError("Authorization has expired.")
-    code_b_hash = hashlib.sha256(code_b.strip().upper())
-
-
-    
-    if not hmac.compare_digest(code_b.strip().upper(), entry["code_b"]):
+    code_b_hash = hashlib.sha256(code_b.strip().upper().encode("utf-8")).hexdigest()    
+    if not hmac.compare_digest(code_b_hash, entry["code_b_hash"]):
         raise ValueError("Invalid access code.")
+    wrap_key = bytes.fromhex(record["wrapped_key"])
     try:
-        key = bytes.fromhex(entry["prompt_key"])
-    except ValueError:
-        raise ValueError("Authorization is invalid.") from None
+        p_key = unwrap_p_key(wrap_key, code_b, bytes.fromhex(file_id))
+        plaintext = unseal_prompt(source.read_bytes(), p_key)
+    except ValueError, TypeError:
+        raise ValueError("Invalid access code.") from None
+    entry["used"] = True
+    
+
+
     if len(key) != 32:
         raise ValueError("Authorization is invalid.")
     plaintext = unseal_prompt(source.read_bytes(), key)
