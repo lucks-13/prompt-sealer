@@ -175,12 +175,21 @@ def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
         if set(record) != {
             "version",
             "file_id",
-            "expire"
+            "expires",
+            "challenge",
+            "code_a_hash",
+            "bootstrap",
+            "nonce",
+            "ciphertext",
+            "wrapped_key"
         }:
             raise ValueError
-        if record["version"] != 3:
+        if record["version"] != 2:
             raise ValueError
-        
+        file_id = bytes.fromhex(record["file_id"])
+        wrap_key = wrap_p_key(p_key, code_b, file_id)
+        record["wrapped_key"] = wrap_key.hex()
+        return 
 
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     try:
