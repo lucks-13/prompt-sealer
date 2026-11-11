@@ -20,6 +20,7 @@ def read_sealed(source : Path) -> dict:
             "file_id",
             "expires",
             "challenge",
+            "code_a_hash",
             "nonce",
             "ciphertext"
         }:
@@ -31,6 +32,8 @@ def read_sealed(source : Path) -> dict:
         if not isinstance(record["expires"], int):
             raise ValueError
         if not isinstance(record["challenge"], str)  or len(bytes.fromhex(record["challenge"])) != 32:
+            raise ValueError
+        if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
             raise ValueError
         if len(bytes.fromhex(record["nonce"])) != 12:
             raise ValueError
@@ -44,9 +47,6 @@ def read_sealed(source : Path) -> dict:
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
-
-def make_code_a() -> str:
-    return secrets.token_hex(6).upper()
 
 def make_code_b() -> str:
     return secrets.token_hex(16).upper()
