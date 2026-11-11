@@ -67,4 +67,4 @@ def unseal_text(ciphertext: bytes, key: bytes, nonce: bytes, extra : bytes | Non
             raise ValueError("Nonce must be exactly 12 bytes.")
     aesgcm = AESGCM(key)
     plaintext = aesgcm.decrypt(nonce,ciphertext, extra)
-    return plaintext       
+    return plaintext
