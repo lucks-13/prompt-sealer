@@ -76,7 +76,7 @@ def verify_code_a (code_a : str, challenge : bytes) -> bool:
 
 def write_atomic(source : Path, data : bytes) -> None:
     source.parent.mkdir(parents=True, exist_ok=True)
-    fd, temp_name = tempfile.mkdtemp(prefix=f".{source.name}.", dir=source.parent)
+    fd, temp_name = tempfile.mkstemp(prefix=f".{source.name}.", dir=source.parent)
     try:
         with os.fdopen(fd, "wb") as handle:
             handle.write(data)
@@ -182,13 +182,14 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     record["wrapped_key"] = None
     consumed = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
     old_source = source.read_bytes()
-    old_state = json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8")
+    old_state = state_path.read_bytes()
     try:
         write_atomic(source, consumed)
-        write_atomic(state_path, old_state.replace(b'"used" : false', b'"used" : true'))
+        write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
     except Exception:
         try :
             write_atomic(source, old_source)
+            write_atomic
         except Exception:
             pass
         raise
