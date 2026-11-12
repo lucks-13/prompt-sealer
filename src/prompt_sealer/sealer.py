@@ -95,8 +95,6 @@ def wrap_p_key(p_key : bytes, code_b : str, file_id : bytes) -> bytes:
 def unwrap_p_key(w_key : bytes, code_b : str, file_id : bytes) -> bytes:
     if len(file_id) !=32:
         raise ValueError("File ID must be exactly 32 bytes.")
-    if len(w_key) <= 12:
-        raise ValueError("Wrapped prompt key is invalid.")
     wrap_key = derive_code_b(code_b, file_id)
     nonce = w_key[:12]
     cipher = w_key[12:]
@@ -109,7 +107,7 @@ def make_code_a(challenge : bytes) -> str:
     if len(challenge) != 32:
         raise ValueError ("Challenge must be exactly 32 bytes.")
     challenge_hex = challenge.hex()
-    val = hashlib.sha256(b"prompt-sealer-code-a:"+challenge_hex.encode("ascii")).hexdigest()[:32]
+    val = hashlib.sha256(b"prompt-sealer-code-a:"+ challenge_hex.encode("ascii")).hexdigest()[:32]
     return val.upper()
 
 def hash_code_a(code_a : str) -> str:
@@ -126,7 +124,7 @@ def payload(prompt : bytes) -> bytes:
         + prompt
     )
 
-def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> bytes:
+def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key) -> bytes:
     if len(key) != 32:
         raise ValueError("Prompt key must be exactly 32 bytes.")
     if len(file_id) != 32:
