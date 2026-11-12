@@ -69,7 +69,7 @@ def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt fil
     except (FileNotFoundError, ValueError, json.JSONDecodeError) as error:
         typer.echo(str(error))
         raise typer.Exit(code=1)
-
+    
 @app.command()
 def redeem_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_b : str = typer.Argument(..., help="Access code B."), dest : Path = typer.Argument(..., help="Output plaintext prompt file.")):
     try:
