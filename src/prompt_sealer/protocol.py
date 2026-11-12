@@ -174,11 +174,8 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     if not hmac.compare_digest(code_b_hash, entry["code_b_hash"]):
         raise ValueError("Invalid access code.")
     wrap_key = bytes.fromhex(record["wrapped_key"])
-    try:
-        p_key = unwrap_p_key(wrap_key, code_b, bytes.fromhex(file_id))
-        plaintext = unseal_prompt(source.read_bytes(), p_key)
-    except (ValueError, TypeError):
-        raise ValueError("Invalid access code.") from None
+    p_key = unwrap_p_key(wrap_key, code_b, bytes.fromhex(file_id))
+    plaintext = unseal_prompt(source.read_bytes(), p_key)
     old_state = state_path.read_bytes()
     old_source = source.read_bytes()
     entry["used"] = True
