@@ -178,18 +178,18 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
         plaintext = unseal_prompt(source.read_bytes(), p_key)
     except (ValueError, TypeError):
         raise ValueError("Invalid access code.") from None
+    old_state = state_path.read_bytes()
+    old_source = source.read_bytes()
     entry["used"] = True
     record["wrapped_key"] = None
     consumed = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
-    old_source = source.read_bytes()
-    old_state = state_path.read_bytes()
     try:
         write_atomic(source, consumed)
         write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
     except Exception:
         try :
             write_atomic(source, old_source)
-            write_atomic
+            write_atomic(state_path, old_state)
         except Exception:
             pass
         raise
