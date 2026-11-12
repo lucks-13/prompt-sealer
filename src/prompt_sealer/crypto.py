@@ -41,13 +41,9 @@ def reveal_badge(stamp_key : Ed25519PrivateKey) -> Ed25519PublicKey:
     return stamp_key.public_key()
 
 def stamp_note(stamp_key : Ed25519PrivateKey, note : bytes) -> bytes:
-    if not isinstance(note, bytes):
-         raise TypeError("Note must be bytes.")
     return stamp_key.sign(note)
 
 def check_mark(badge : Ed25519PublicKey, mark : bytes, note : bytes) -> bool:
-    if not isinstance(mark, bytes) or not isinstance(note, bytes):
-         return False
     try:
         badge.verify(mark, note)
         return True
@@ -60,9 +56,8 @@ def seal_text(raw_note : bytes, lock_key : bytes, extra : bytes | None = None) -
     if not isinstance(raw_note, bytes):
         raise TypeError("Plain-Text must be bytes.")
     iv = nonce_seed()
-    box = AESGCM(lock_key)
-    sealed_pack = box.encrypt(iv, raw_note, extra)
-    return iv, sealed_pack
+    box = AESGCM(lock_key).encrypt(iv, raw_note, extra)
+    return iv, box
 
 def unseal_text(ciphertext: bytes, key: bytes, nonce: bytes, extra : bytes | None = None) -> bytes:
     if len(key) != 32:
