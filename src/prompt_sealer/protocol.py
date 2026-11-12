@@ -6,6 +6,7 @@ import tempfile
 import time
 from pathlib import Path
 from prompt_sealer.sealer import make_code_a, attach_code_b, unwrap_p_key, unseal_prompt
+from prompt_sealer.crypto import check_mark
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
@@ -14,8 +15,6 @@ def read_sealed(source : Path) -> dict:
         raise ValueError("Sealed prompt path must be a file.")
     try:
         record = json.loads(source.read_bytes().decode("utf-8"))
-        if not isinstance(record, dict):
-            raise ValueError
         if set(record) != {
             "version",
             "file_id",
@@ -25,16 +24,17 @@ def read_sealed(source : Path) -> dict:
             "bootstrap",
             "nonce",
             "ciphertext",
-            "wrapped_key"
+            "wrapped_key",
+            "signature"
         }:
             raise ValueError
         if type(record["version"]) is not int or record["version"] != 1:
             raise ValueError
-        if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
+        if len(bytes.fromhex(record["file_id"])) != 32:
             raise ValueError
         if not isinstance(record["expires"], int) or record["expires"] <= 0:
             raise ValueError
-        if not isinstance(record["challenge"], str)  or len(bytes.fromhex(record["challenge"])) != 32:
+        if len(bytes.fromhex(record["challenge"])) != 32:
             raise ValueError
         if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
             raise ValueError
