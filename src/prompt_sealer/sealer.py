@@ -1,7 +1,7 @@
 import hashlib
 import json
 from pathlib import Path
-from prompt_sealer.crypto import seal_text, unseal_text
+from prompt_sealer.crypto import seal_text, unseal_text, stamp_note
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
@@ -81,8 +81,6 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
 def derive_code_b(code_b : str, file_id : bytes) -> bytes:
-    if not isinstance(code_b, str):
-        raise TypeError("Code B must be a string.")
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-code-b-wrap").derive(code_b.strip().upper().encode("utf-8"))
