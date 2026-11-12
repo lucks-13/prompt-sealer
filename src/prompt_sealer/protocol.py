@@ -102,12 +102,19 @@ def read_state(state_path : Path) -> dict:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Authorization state is invalid.") from None
 
-def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path) -> str:
+def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path, signing_key) -> str:
     if len(prompt_key) != 32:
         raise ValueError("Invalid prompt key.")
     if len(file_id) != 32:
         raise ValueError("Invalid File ID.")
     record = read_sealed(source)
+    s_record = dict(record)
+    sign = bytes.fromhex(s_record.pop("signature"))
+    s_record["wrapped_key"] = None
+    
+
+
+
     files_id = bytes.fromhex(record["file_id"])
     if not hmac.compare_digest(files_id, file_id):
         raise ValueError("Invalid sealed prompt.")
