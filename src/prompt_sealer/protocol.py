@@ -166,12 +166,6 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     entry = state.get(file_id)
     if not isinstance(entry, dict):
         raise ValueError("No Authorization exists.")
-    if not isinstance(entry.get("code_b_hash"), str) or len(entry["code_b_hash"]) != 64:
-        raise ValueError("Authorization is invalid.")
-    if not isinstance(entry.get("expires"), int):
-        raise ValueError("Authorization is invalid.")
-    if not isinstance(entry.get("used"), bool):
-        raise ValueError("Authorization is invalid.")
     if entry["used"]:
         raise ValueError("Access code has already been used.")
     if int(time.time()) >= entry["expires"]:
