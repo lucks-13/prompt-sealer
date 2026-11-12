@@ -111,10 +111,9 @@ def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, 
     s_record = dict(record)
     sign = bytes.fromhex(s_record.pop("signature"))
     s_record["wrapped_key"] = None
-    
-
-
-
+    s_data = json.dumps(s_record, sort_keys=True, separators=(",",":")).encode("utf-8")
+    if not check_mark(signing_key.public_key(), sign, s_data):
+        raise ValueError("Invalid sealed prompt")
     files_id = bytes.fromhex(record["file_id"])
     if not hmac.compare_digest(files_id, file_id):
         raise ValueError("Invalid sealed prompt.")
