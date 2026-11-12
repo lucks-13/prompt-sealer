@@ -169,33 +169,12 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
 def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
     record = json.loads(blob.decode("utf-8"))
     if record["wrapped_key"] is not None:
-        raise ValueError()
-        
-        if not isinstance(record, dict):
-            raise ValueError
-        if set(record) != {
-            "version",
-            "file_id",
-            "expires",
-            "challenge",
-            "code_a_hash",
-            "bootstrap",
-            "nonce",
-            "ciphertext",
-            "wrapped_key"
-        }:
-            raise ValueError
-        if record["version"] != 1:
-            raise ValueError
-        if record["wrapped_key"] is not None:
-            raise ValueError("prompt file is already authorized.")
-        file_id = bytes.fromhex(record["file_id"])
-        wrap_key = wrap_p_key(p_key, code_b, file_id)
-        record["wrapped_key"] = wrap_key.hex()
-        return json.dumps(record, sort_keys=True, separators=("," ,":")).encode("utf-8")
-    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
-        raise ValueError("Prompt file is invalid.") from None
-
+        raise ValueError("prompt file is already authorized.")    
+    file_id = bytes.fromhex(record["file_id"])
+    wrap_key = wrap_p_key(p_key, code_b, file_id)
+    record["wrapped_key"] = wrap_key.hex()
+    return json.dumps(record, sort_keys=True, separators=("," ,":")).encode("utf-8")
+    
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     try:
         record = json.loads(blob.decode("utf-8"))
