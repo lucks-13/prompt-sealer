@@ -176,33 +176,14 @@ def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
     return json.dumps(record, sort_keys=True, separators=("," ,":")).encode("utf-8")
     
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
-    try:
-        record = json.loads(blob.decode("utf-8"))
-        if not isinstance(record, dict):
-            raise ValueError
-        if set(record) != {"version", "file_id", "expires", "challenge", "code_a_hash", "bootstrap", "nonce", "ciphertext", "wrapped_key"}:
-            raise ValueError
-        if record["version"] != 1 or type(record["version"]) is not int:
-            raise ValueError
-        if not isinstance(record["file_id"], str) or len(bytes.fromhex(record["file_id"])) != 32:
-            raise ValueError
-        if type(record["expires"]) is not int or record["expires"] <= 0:
-            raise ValueError
-        if not isinstance(record["challenge"], str) or len(bytes.fromhex(record["challenge"])) != 32:
-            raise ValueError
-        if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
-            raise ValueError
-        if record["bootstrap"] != Ai_bootstrap:
-            raise ValueError
-        nonce = bytes.fromhex(record["nonce"])
-        ciphertext = bytes.fromhex(record["ciphertext"])
-        if len(nonce) != 12 or not ciphertext:
-            raise ValueError
-        if not isinstance(record["wrapped_key"], str):
-            raise ValueError
-        extra = json.dumps(
-            {
-                "version" : record["version"],
+    record = json.loads(blob.decode("utf-8"))
+    if record["version"] != 1:
+        raise ValueError
+    nonce = bytes.fromhex(record["nonce"])
+    ciphertext = bytes.fromhex(record["ciphertext"])    
+    extra = json.dumps(
+        {
+            "version" : record["version"],
                 "file_id" : record["file_id"],
                 "expires" : record["expires"],
                 "challenge" : record["challenge"],
