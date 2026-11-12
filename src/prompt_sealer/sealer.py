@@ -179,28 +179,28 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     record = json.loads(blob.decode("utf-8"))
     if record["version"] != 1:
         raise ValueError
+    if "signature" not in record:
+        raise ValueError("Prompt file is invalid.")
     nonce = bytes.fromhex(record["nonce"])
     ciphertext = bytes.fromhex(record["ciphertext"])    
     extra = json.dumps(
         {
             "version" : record["version"],
-                "file_id" : record["file_id"],
-                "expires" : record["expires"],
-                "challenge" : record["challenge"],
-                "code_a_hash" : record["code_a_hash"],
-                "bootstrap" : record["bootstrap"]
-            },
-            sort_keys=True,
-            separators=(",", ":")
+            "file_id" : record["file_id"],
+            "expires" : record["expires"],
+            "challenge" : record["challenge"],
+            "code_a_hash" : record["code_a_hash"],
+            "bootstrap" : record["bootstrap"]
+        },
+        sort_keys=True,
+        separators=(",", ":")
         ).encode("utf-8")
 
-        return unseal_text(ciphertext, key, nonce, extra)
-    except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
-        raise ValueError("Prompt file is invalid or cannot be decrypted.") from None
+    return unseal_text(ciphertext, key, nonce, extra)
 
-def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes) -> None:
+def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key) -> None:
     prompt = read_prompt(source)
-    sealed = seal_prompt(prompt, key, file_id, expires, challenge)
+    sealed = seal_prompt(prompt, key, file_id, expires, challenge, signing_key)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(sealed)
 
