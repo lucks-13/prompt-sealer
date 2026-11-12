@@ -161,11 +161,16 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         "wrapped_key" : None
     }
 
+    s_data = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
+    record["signature"] = stamp_note(signing_key, s_data).hex()
+
     return json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
 
 def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
-    try:
-        record = json.loads(blob.decode("utf-8"))
+    record = json.loads(blob.decode("utf-8"))
+    if record["wrapped_key"] is not None:
+        raise ValueError()
+        
         if not isinstance(record, dict):
             raise ValueError
         if set(record) != {
