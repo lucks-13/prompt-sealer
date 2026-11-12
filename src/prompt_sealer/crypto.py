@@ -42,10 +42,12 @@ def reveal_badge(stamp_key : Ed25519PrivateKey) -> Ed25519PublicKey:
 
 def stamp_note(stamp_key : Ed25519PrivateKey, note : bytes) -> bytes:
     if not isinstance(note, bytes):
-         raise TypeError
+         raise TypeError("Note must be bytes.")
     return stamp_key.sign(note)
 
 def check_mark(badge : Ed25519PublicKey, mark : bytes, note : bytes) -> bool:
+    if not isinstance(mark, bytes) or not isinstance(note, bytes):
+         return False
     try:
         badge.verify(mark, note)
         return True
