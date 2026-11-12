@@ -41,6 +41,8 @@ def reveal_badge(stamp_key : Ed25519PrivateKey) -> Ed25519PublicKey:
     return stamp_key.public_key()
 
 def stamp_note(stamp_key : Ed25519PrivateKey, note : bytes) -> bytes:
+    if not isinstance(note, bytes):
+         raise TypeError
     return stamp_key.sign(note)
 
 def check_mark(badge : Ed25519PublicKey, mark : bytes, note : bytes) -> bool:
