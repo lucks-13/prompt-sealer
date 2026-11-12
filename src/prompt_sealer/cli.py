@@ -3,7 +3,7 @@ from pathlib import Path
 from prompt_sealer.sealer import derive_prompt_key, seal_file
 from prompt_sealer.vault import init_vault, check_vault,destroy_vault, open_vault
 from prompt_sealer.crypto import roll_seed
-from prompt_sealer.protocol import authorize, redeem
+from prompt_sealer.protocol import authorize, redeem, read_sealed
 import time
 import json
 
@@ -61,7 +61,7 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
 def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt file."), code_a : str = typer.Argument(..., help="Access code A.")):
     try:
         _, _, machine_secret = open_vault(vault_path)
-        record = json.loads(source.read_bytes().decode("utf-8"))
+        record = read_sealed(source)
         file_id = bytes.fromhex(record["file_id"])
         p_key = derive_prompt_key(machine_secret, file_id)
         code_b = authorize(source, code_a, p_key, file_id, state_path)
