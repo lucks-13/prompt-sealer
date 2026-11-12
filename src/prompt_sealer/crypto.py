@@ -1,5 +1,5 @@
 import secrets
-from cryptography.exceptions import InvalidSignature
+from cryptography.exceptions import InvalidSignature, InvalidTag
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -64,6 +64,8 @@ def unseal_text(ciphertext: bytes, key: bytes, nonce: bytes, extra : bytes | Non
             raise ValueError("Encryption key must be exactly 32 bytes.")
     if len(nonce) != 12:
             raise ValueError("Nonce must be exactly 12 bytes.")
-    aesgcm = AESGCM(key)
-    plaintext = aesgcm.decrypt(nonce,ciphertext, extra)
+    try:
+        plaintext = AESGCM(key).decrypt(nonce,ciphertext, extra)
+    except InvalidTag:
+         raise ValueError("Invalid Data cannot be decrypted")
     return plaintext
