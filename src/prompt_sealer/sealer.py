@@ -121,7 +121,12 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
 def make_code_b(machine_secret : bytes, file_id : bytes) -> str:
-    if len(machine_secret) != 
+    if len(machine_secret) != 32:
+        raise ValueError("Machine secret must be exactly 32 bytes.")
+    if len(file_id) != 32:
+        raise ValueError("File ID must be exactly 32 bytes.")
+    message = b"prompt-sealer-code-b:" + file_id
+    return hmac.new(machine_secret, message, hashlib.sha256).hexdigest()[:32].upper()
 
 def derive_code_b(code_b : str, file_id : bytes) -> bytes:
     if len(file_id) != 32:
