@@ -26,19 +26,11 @@ def check_mark(badge : Ed25519PublicKey, mark : bytes, note : bytes) -> bool:
          return False
 
 def seal_text(raw_note : bytes, lock_key : bytes, extra : bytes | None = None) -> tuple[bytes, bytes]:
-    if len(lock_key) != 32:
-        raise ValueError("Encryption key must be exactly 32 bytes.")
-    if not isinstance(raw_note, bytes):
-        raise TypeError("Plain-Text must be bytes.")
     iv = nonce_seed()
     box = AESGCM(lock_key).encrypt(iv, raw_note, extra)
     return iv, box
 
 def unseal_text(ciphertext: bytes, key: bytes, nonce: bytes, extra : bytes | None = None) -> bytes:
-    if len(key) != 32:
-            raise ValueError("Encryption key must be exactly 32 bytes.")
-    if len(nonce) != 12:
-            raise ValueError("Nonce must be exactly 12 bytes.")
     try:
         plaintext = AESGCM(key).decrypt(nonce,ciphertext, extra)
     except InvalidTag:
