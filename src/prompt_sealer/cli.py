@@ -45,7 +45,7 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
         challenge = roll_seed()
         expires = int(time.time()) + 3600
         p_key = derive_prompt_key(machine_secret, file_id)
-        seal_file(source, dest, p_key, file_id, expires, challenge, sign)
+        seal_file(source, dest, p_key, file_id, expires, challenge, sign, machine_secret)
         typer.echo(f"Prompt sealed : {dest}")
         typer.echo("")
         typer.echo("Share this sealed file with Ai :")
@@ -63,8 +63,7 @@ def authorize_prompt(source : Path = typer.Argument(..., help="Sealed prompt fil
         _, sign, machine_secret = open_vault(vault_path)
         record = read_sealed(source)
         file_id = bytes.fromhex(record["file_id"])
-        p_key = derive_prompt_key(machine_secret, file_id)
-        code_b = authorize(source, code_a, p_key, file_id, state_path, sign)
+        code_b = authorize(source, code_a, machine_secret, file_id, state_path, sign)
         typer.echo(f"Access Code B : {code_b}")
     except (FileNotFoundError, ValueError, json.JSONDecodeError) as error:
         typer.echo(str(error))
