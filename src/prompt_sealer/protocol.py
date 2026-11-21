@@ -135,13 +135,8 @@ def authorize(source : Path, code_a : str, machine_secret : bytes, file_id : byt
     }
     state_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        write_atomic(source, sealed)
         write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
     except Exception:
-        try:
-            write_atomic(source, sealed_b)
-        except Exception:
-            pass
         state.pop(file_id_hex, None)
         raise
     return code_b
@@ -151,8 +146,6 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     file_id = record["file_id"]
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
-    if record["wrapped_key"] is None:
-        raise ValueError("Prompt has not been authorized.")
     state = read_state(state_path)
     entry = state.get(file_id)
     if not isinstance(entry, dict):
@@ -167,17 +160,12 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     wrap_key = bytes.fromhex(record["wrapped_key"])
     p_key = unwrap_p_key(wrap_key, code_b, bytes.fromhex(file_id))
     plaintext = unseal_prompt(source.read_bytes(), p_key)
-    old_state = state_path.read_bytes()
-    old_source = source.read_bytes()
+    old_state = state_path.read_bytes() if state_path.exists() else b"{}"
     entry["used"] = True
-    record["wrapped_key"] = None
-    consumed = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
     try:
-        write_atomic(source, consumed)
         write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
     except Exception:
         try :
-            write_atomic(source, old_source)
             write_atomic(state_path, old_state)
         except Exception:
             pass
