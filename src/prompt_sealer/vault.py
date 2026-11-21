@@ -64,7 +64,7 @@ def init_vault(location : Path) -> None:
         raise FileExistsError("Vault already exists.")
     location.parent.mkdir(parents=True, exist_ok=True)
     location.write_bytes(create_vault())
-
+    
 def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey, bytes]:
     try:
         data = json.loads(fetch_store(location).decode("utf-8"))
