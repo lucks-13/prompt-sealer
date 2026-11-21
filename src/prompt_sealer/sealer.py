@@ -121,8 +121,8 @@ def read_prompt(location : Path) -> bytes:
 def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
     if len(machine_secret) != 32 or len(file_id) != 32:
         raise ValueError("Machine secret and file ID must be exactly 32 bytes.")
-    return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
-
+    return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret
+                                                                                                             
 def derive_code_b(code_b : str, file_id : bytes) -> bytes:
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
@@ -255,4 +255,4 @@ def unseal_file(source : Path, dest : Path, key : bytes) -> None:
     prompt = unseal_prompt(source.read_bytes(), key)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(prompt)
-
+    
