@@ -217,7 +217,7 @@ def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
     wrap_key = wrap_p_key(p_key, code_b, file_id)
     record["wrapped_key"] = wrap_key.hex()
     return json.dumps(record, sort_keys=True, separators=("," ,":")).encode("utf-8")
-    
+
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     record = json.loads(blob.decode("utf-8"))
     if record["version"] != 1:

@@ -89,7 +89,7 @@ def write_atomic(source : Path, data : bytes) -> None:
         except FileNotFoundError:
             pass
         raise
-
+    
 def read_state(state_path : Path) -> dict:
     if not state_path.exists():
         return {}
