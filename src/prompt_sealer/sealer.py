@@ -123,9 +123,12 @@ def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
         raise ValueError("Machine secret and file ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret
                                                                                                              
-def derive_code_b(code_b : str, file_id : bytes) -> bytes:
+def derive_code_b(code_b : str, file_id : bytes) -> str:
+    if len(code_b) != 32:
+        raise ValueError("Machine secret must be exactly 32 bytes.")
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
+    message = b""
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-code-b-wrap").derive(code_b.strip().upper().encode("utf-8"))
 
 def wrap_p_key(p_key : bytes, code_b : str, file_id : bytes) -> bytes:
@@ -246,7 +249,7 @@ def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires 
     sealed = seal_prompt(prompt, key, file_id, expires, challenge, signing_key)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(sealed)
-    
+
 def unseal_file(source : Path, dest : Path, key : bytes) -> None:
     if not source.exists():
         raise FileNotFoundError("Sealed prompt file does not exist.")
