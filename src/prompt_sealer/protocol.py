@@ -47,10 +47,11 @@ def read_sealed(source : Path) -> dict:
             raise ValueError
         if len(signature) != 64:
             raise ValueError
-        if record["wrapped_key"] is not None:
-            wrap_key = bytes.fromhex(record["wrapped_key"])
-            if len(wrap_key) <= 12:
-                raise ValueError
+        if not isinstance(record["wrapped_key"], str):
+            raise ValueError
+        wrap_key = bytes.fromhex(record["wrapped_key"])
+        if len(wrap_key) <= 12:
+            raise ValueError
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
