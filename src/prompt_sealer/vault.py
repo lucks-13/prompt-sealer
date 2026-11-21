@@ -33,7 +33,7 @@ def create_vault() -> bytes:
     vault_data = {
         "version" : 1,
         "signing_key" : tuck_badge(sign_key).hex(),
-        "machine_secret" : p_machine_secret.hex()
+        "machine_secret" : seal_blob(machine_secret).hex()
     }
     return json.dumps(vault_data).encode("utf-8")
 
@@ -43,21 +43,14 @@ def init_vault(location : Path) -> None:
     location.parent.mkdir(parents=True, exist_ok=True)
     location.write_bytes(create_vault())
 
-def open_vault(location : Path) -> tuple[X25519PrivateKey, Ed25519PrivateKey, bytes]:
+def open_vault(location : Path) -> tuple[Ed25519PrivateKey, bytes]:
     try:
         data = json.loads(fetch_store(location).decode("utf-8"))
-        if not isinstance(data, dict):
-            raise ValueError
-        if set(data) != {"version", "encryption_key", "signing_key", "machine_secret"}:
-            raise ValueError
         if data["version"] != 1:
             raise ValueError
-        en_key = bytes.fromhex(data["encryption_key"])
         sg_key = bytes.fromhex(data["signing_key"])
         machine_secret = unlock_record(bytes.fromhex(data["machine_secret"]))
-        if len(machine_secret) != 32:
-            raise ValueError("Invalid machine secret.")
-        return unpack_token(en_key), bring_badge(sg_key), machine_secret
+        return bring_badge(sg_key), machine_secret
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Vault is invalid or cannot be unlocked.") from None
 
@@ -68,6 +61,4 @@ def check_vault(location : Path) -> bool:
 def destroy_vault(location : Path) -> None:
     if not location.exists():
         raise FileNotFoundError("Vault file does not exist.")
-    if not location.is_file():
-        raise ValueError("Vault path must be a file.")
     location.unlink()
