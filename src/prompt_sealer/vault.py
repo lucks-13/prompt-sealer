@@ -11,49 +11,28 @@ def seal_blob(data : bytes) -> bytes:
 
 def unlock_record(blob : bytes) -> bytes:
     try:
-        result = win32crypt.CryptUnprotectData(blob, None, None, None, 0)
-        return result[1]
+        return win32crypt.CryptUnprotectData(blob, None, None, None, 0)[1]
     except (pywintypes.error, TypeError, ValueError):
         raise ValueError("Unable to decrypt protected data.") from None
-    
-def tuck_away(vault_key : X25519PrivateKey) -> bytes:
-    key_bytes = vault_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
-    return seal_blob(key_bytes)
-
-def unpack_token(saved_key : bytes) -> X25519PrivateKey:
-    key = unlock_record(saved_key)
-    if len(key) != 32:
-        raise ValueError("Invalid encryption key.")
-    return X25519PrivateKey.from_private_bytes(key)
 
 def tuck_badge(private_key : Ed25519PrivateKey) -> bytes:
     key_data = private_key.private_bytes(encoding=Encoding.Raw, format=PrivateFormat.Raw, encryption_algorithm=NoEncryption())
     return seal_blob(key_data)
 
 def bring_badge(blob : bytes) -> Ed25519PrivateKey:
-    key_data = unlock_record(blob)
-    if len(key_data) != 32:
-        raise ValueError("Invalid signing key.")
-    return Ed25519PrivateKey.from_private_bytes(key_data)
+    return Ed25519PrivateKey.from_private_bytes(unlock_record(blob))
 
 def fetch_store (location : Path) -> bytes:
     if not location.exists():
         raise FileNotFoundError("Vault file does not exist.")
-    if not location.is_file():
-        raise ValueError("Vault path must be a file.")
     return location.read_bytes()
 
 def create_vault() -> bytes:
-    en_key = mint_pair()
     sign_key = mint_stamp()
     machine_secret = roll_seed()
-    p_en_key = tuck_away(en_key)
-    p_sign_key = tuck_badge(sign_key)
-    p_machine_secret = seal_blob(machine_secret)
     vault_data = {
         "version" : 1,
-        "encryption_key" : p_en_key.hex(),
-        "signing_key" : p_sign_key.hex(),
+        "signing_key" : tuck_badge(sign_key).hex(),
         "machine_secret" : p_machine_secret.hex()
     }
     return json.dumps(vault_data).encode("utf-8")
