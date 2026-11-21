@@ -247,12 +247,12 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         sort_keys=True,
         separators=(",", ":")
         ).encode("utf-8")
-
+    
     return unseal_text(ciphertext, key, nonce, extra)
 
-def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, mac) -> None:
+def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, machine_secret : bytes) -> None:
     prompt = read_prompt(source)
-    sealed = seal_prompt(prompt, key, file_id, expires, challenge, signing_key)
+    sealed = seal_prompt(prompt, key, file_id, expires, challenge, signing_key, machine_secret)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(sealed)
 
