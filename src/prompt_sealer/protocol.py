@@ -56,16 +56,12 @@ def read_sealed(source : Path) -> dict:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
     
-def make_code_b(code_a : str, machine : bytes, file_id : bytes) -> str:
+def make_code_b(machine : bytes, file_id : bytes) -> str:
     if len(machine) != 32:
         raise ValueError("Machine secret must be exactly 32 bytes.")
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
-    message = (
-        b"prompt-sealer-code-b:"
-        + code_a.strip().upper().encode("utf-8")
-        + file_id    
-    )
+    message = b"prompt-sealer-code-b:" + file_id
     return hmac.new(machine, message, hashlib.sha256).hexdigest()[:32].upper()
 
 def check_expire(expires : int) -> bool:
@@ -102,15 +98,14 @@ def read_state(state_path : Path) -> dict:
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Authorization state is invalid.") from None
     
-def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path, signing_key) -> str:
-    if len(prompt_key) != 32:
-        raise ValueError("Invalid prompt key.")
+def authorize(source : Path, code_a : str, machine_secret : bytes, file_id : bytes, state_path : Path, signing_key) -> str:
+    if len(machine_secret) != 32:
+        raise ValueError("Invalid machine secret.")
     if len(file_id) != 32:
         raise ValueError("Invalid File ID.")
     record = read_sealed(source)
     s_record = dict(record)
     sign = bytes.fromhex(s_record.pop("signature"))
-    s_record["wrapped_key"] = None
     s_data = json.dumps(s_record, sort_keys=True, separators=(",",":")).encode("utf-8")
     if not check_mark(signing_key.public_key(), sign, s_data):
         raise ValueError("Invalid sealed prompt")
