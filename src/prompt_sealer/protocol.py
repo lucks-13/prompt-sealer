@@ -120,8 +120,6 @@ def authorize(source : Path, code_a : str, machine_secret : bytes, file_id : byt
     code_a_hash = hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
     if not hmac.compare_digest(code_a_hash, record["code_a_hash"]):
         raise ValueError("Invalid sealed prompt.")
-    if record["wrapped_key"] is not None:
-        raise ValueError("Prompt has already been authorized.")
     state = read_state(state_path)
     file_id_hex = file_id.hex()
     if file_id_hex in state:
@@ -129,14 +127,12 @@ def authorize(source : Path, code_a : str, machine_secret : bytes, file_id : byt
         if (isinstance(entry, dict) and entry.get("used") is True):
             raise ValueError("Prompt access has already been used.")
         raise ValueError("Prompt has already been authorized.")
-    code_b = make_code_b(code_a, prompt_key, file_id)
-    sealed = attach_code_b(source.read_bytes(), prompt_key, code_b)
+    code_b = make_code_b(machine_secret, file_id)
     state[file_id_hex] = {
         "code_b_hash" : hashlib.sha256(code_b.strip().upper().encode("utf-8")).hexdigest(),
         "expires" : record["expires"],
         "used" : False
     }
-    sealed_b = source.read_bytes()
     state_path.parent.mkdir(parents=True, exist_ok=True)
     try:
         write_atomic(source, sealed)
