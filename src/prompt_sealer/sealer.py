@@ -199,6 +199,8 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
     ).encode("utf-8")
     pl = payload(prompt)
     nonce, ciphertext = seal_text(pl, key, extra)
+    code_b = make_code_b(machine_secret, file_id)
+    wrapped_key = wrap_p_key(key, code_b, file_id).hex()
     record = {
         "version" : 1,
         "file_id" : file_id.hex(),
@@ -208,7 +210,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         "bootstrap" : Ai_bootstrap,
         "nonce" : nonce.hex(),
         "ciphertext" : ciphertext.hex(),
-        "wrapped_key" : None
+        "wrapped_key" : wrapped_key
     }
 
     s_data = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
@@ -248,7 +250,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
 
     return unseal_text(ciphertext, key, nonce, extra)
 
-def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key) -> None:
+def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, mac) -> None:
     prompt = read_prompt(source)
     sealed = seal_prompt(prompt, key, file_id, expires, challenge, signing_key)
     dest.parent.mkdir(parents=True, exist_ok=True)
