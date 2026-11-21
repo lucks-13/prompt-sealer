@@ -89,7 +89,7 @@ def write_atomic(source : Path, data : bytes) -> None:
         except FileNotFoundError:
             pass
         raise
-    
+
 def read_state(state_path : Path) -> dict:
     if not state_path.exists():
         return {}
@@ -100,7 +100,7 @@ def read_state(state_path : Path) -> dict:
         return state
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Authorization state is invalid.") from None
-
+    
 def authorize(source : Path, code_a : str, prompt_key : bytes, file_id : bytes, state_path : Path, signing_key) -> str:
     if len(prompt_key) != 32:
         raise ValueError("Invalid prompt key.")
