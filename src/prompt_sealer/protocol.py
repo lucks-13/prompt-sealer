@@ -65,8 +65,7 @@ def make_code_b(code_a : str, machine : bytes, file_id : bytes) -> str:
         + code_a.strip().upper().encode("utf-8")
         + file_id    
     )
-    value = hmac.new(machine, message, hashlib.sha256).hexdigest()[:32]
-    return value.upper()
+    return hmac.new(machine, message, hashlib.sha256).hexdigest()[:32].upper()
 
 def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
