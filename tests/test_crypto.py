@@ -23,7 +23,7 @@ def test_key_exchange():
 
     secret_1 = blend_secret(private_1, public_2)
     secret_2 = blend_secret(private_2, public_1)
-    
+
     assert secret_1 == secret_2
     packed = pack_remote(public_1)
     restored = read_remote(packed)
@@ -35,7 +35,7 @@ def test_key_exchange():
 def test_key_derivation():
     private_1 = mint_pair()
     private_2 = mint_pair()
-
+    
     secret_1 = blend_secret(private_1, expose_token(private_2))
     secret_2 = blend_secret(private_2, expose_token(private_1))
 
