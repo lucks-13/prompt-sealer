@@ -172,13 +172,15 @@ def payload(prompt : bytes) -> bytes:
         + prompt
     )
 
-def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key) -> bytes:
+def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, machine_secret : bytes) -> bytes:
     if len(key) != 32:
         raise ValueError("Prompt key must be exactly 32 bytes.")
     if len(file_id) != 32:
         raise ValueError("File ID must be exactly 32 bytes.")
     if len(challenge) != 32:
         raise ValueError("Challenge must be exactly 32 bytes.")
+    if len(machine_secret) != 32:
+        raise ValueError("Machine secret must be exactly 32 bytes.")
     if type(expires) is not int or expires <= 0:
         raise ValueError("Invalid expiration timestamp.")
     code_a = make_code_a(challenge)
