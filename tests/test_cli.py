@@ -47,5 +47,7 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     assert sealed_file.read_bytes() == sealed_before
     state = json.loads(sealed_file.read_text(encoding="utf-8"))
     assert state[record["file_id"]]["used"] is True
-    res = runner.invoke(cli.app, ["redeem-prompt", str(sealed_file), code_b, ])
+    res = runner.invoke(cli.app, ["redeem-prompt", str(sealed_file), code_b, str(tmp_path / "again.txt")])
     assert res.exit_code == 1
+
+def test_wrong_code_and_tampered_
