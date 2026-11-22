@@ -53,4 +53,5 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
 def test_wrong_code_and_tampered(monkeypatch, tmp_path : Path):
     patch_paths(monkeypatch, tmp_path)
     runner.invoke(cli.app, ["init"])
-    
+    prompt_file = tmp_path / "prompt.txt"
+    seal
