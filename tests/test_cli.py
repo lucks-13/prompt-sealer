@@ -44,4 +44,8 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     redeemed_text = redeemed_file.read_text(encoding="utf-8")
     assert "--- Protected User Prompt ---" in redeemed_text
     assert "Test Prompt" in redeemed_text
-    assert sealed_file.read_bytes() == se
+    assert sealed_file.read_bytes() == sealed_before
+    state = json.loads(sealed_file.read_text(encoding="utf-8"))
+    assert state[record["file_id"]]["used"] is True
+    res = runner.invoke(cli.app, ["redeem-prompt", str(sealed_file), code_b, ])
+    assert res.exit_code == 1
