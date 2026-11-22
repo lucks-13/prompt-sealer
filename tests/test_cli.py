@@ -77,4 +77,7 @@ def test_expired_file(monkeypatch, tmp_path : Path):
     sealed_file = tmp_path / "sealed.json"
     prompt_file.write_text("Test Prompt", encoding="utf-8")
     res = runner.invoke(cli.app, ["seal", str(prompt_file), str(sealed_file)], input="1\n0\n")
-        assert res.exit_code == 0
+    assert res.exit_code == 0
+    record = json.loads(sealed_file.read_text(encoding="utf-8"))
+    code_a = sealer.make_code_a(bytes.fromhex(record["challenge"]))
+    monkeypatch.sett
