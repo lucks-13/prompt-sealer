@@ -154,8 +154,7 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         sort_keys=True,
         separators=(",", ":"),
     ).encode("utf-8")
-    pl = payload(prompt)
-    nonce, ciphertext = seal_text(pl, key, extra)
+    nonce, ciphertext = seal_text(payload(prompt), key, extra)
     code_b = make_code_b(machine_secret, file_id)
     wrapped_key = wrap_p_key(key, code_b, file_id).hex()
     record = {
@@ -169,29 +168,18 @@ def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, cha
         "ciphertext" : ciphertext.hex(),
         "wrapped_key" : wrapped_key
     }
-
     s_data = json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
     record["signature"] = stamp_note(signing_key, s_data).hex()
-
     return json.dumps(record, sort_keys=True, separators=(",",":")).encode("utf-8")
 
 def attach_code_b(blob : bytes, p_key : bytes, code_b : str) -> bytes:
     record = json.loads(blob.decode("utf-8"))
-    if record["wrapped_key"] is not None:
-        raise ValueError("prompt file is already authorized.")    
     file_id = bytes.fromhex(record["file_id"])
-    wrap_key = wrap_p_key(p_key, code_b, file_id)
-    record["wrapped_key"] = wrap_key.hex()
+    record["wrapped_key"] = wrap_p_key(p_key, code_b, file_id).hex()
     return json.dumps(record, sort_keys=True, separators=("," ,":")).encode("utf-8")
 
 def unseal_prompt(blob : bytes, key : bytes) -> bytes:
     record = json.loads(blob.decode("utf-8"))
-    if record["version"] != 1:
-        raise ValueError
-    if "signature" not in record:
-        raise ValueError("Prompt file is invalid.")
-    nonce = bytes.fromhex(record["nonce"])
-    ciphertext = bytes.fromhex(record["ciphertext"])    
     extra = json.dumps(
         {
             "version" : record["version"],
@@ -205,7 +193,7 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         separators=(",", ":")
         ).encode("utf-8")
     
-    return unseal_text(ciphertext, key, nonce, extra)
+    return unseal_text(bytes.fromhex(record["ciphertext"]), key, bytes.fromhex(record["nonce"]), extra)
 
 def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, machine_secret : bytes) -> None:
     prompt = read_prompt(source)
