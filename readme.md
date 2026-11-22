@@ -45,7 +45,7 @@ prompt-sealer check
 prompt-sealer seal prompt.txt sealed_prompt
 ```
 
-4. Now Share sealed_prompt file to a ai { i tested using claude free chat / free plan }
+4. Now Share sealed_prompt file to a ai { i tested using claude free chat / free plan coz its not working on chatgpt }
 
 
 5. Now authorize the sealed prompt using Access Code A to get Access Code B
@@ -74,4 +74,4 @@ prompt-sealer destroy
 
 # Ai Disclosure
 
-I used AI alot but not for code generation coz this a very complicated project so technically i cannot build them without using ai { here ai means chatgpt, gemini, claude not ai agent like claude code, codex } so i use ai as learning assistant to understand cryptographic concepts, simplify code structure 
+I used AI alot but not for code generation coz this a very complicated project so technically i cannot build them without using ai { here ai means chatgpt, gemini, claude not ai agent like claude code, codex } so i use ai as learning assistant to understand cryptographic concepts, simplify code structure and troubleshoot errors, while building this project most of the code is written by me and with ai helping me to reason through design trade-offs and debug issues when i got struck.
