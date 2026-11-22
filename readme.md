@@ -60,4 +60,14 @@ prompt-sealer authorize-prompt sealed_prompt.json <ACCESS_CODE_A>
 prompt-sealer redeem-prompt sealed_prompt <ACCESS_CODE_B> redeemed_prompt.txt
 ```
 
-7. Now to Destroy the Vault so that existing encrypt 
+7. Now to Destroy the Vault so that existing encrypted prompt become undecryptable
+
+```
+prompt-sealer destroy
+```
+
+# What I learned.
+
+* Encrypting and Decrypting payload with AES-256-GCM, HKDF-SHA256 and HMAC-SHA256
+* Signing the file using Ed25519
+* Protecting local secrets with windows DPADI 
