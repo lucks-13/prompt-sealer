@@ -70,3 +70,11 @@ def test_wrong_code_and_tampered(monkeypatch, tmp_path : Path):
     res = runner.invoke(cli.app, ["authorize-prompt", str(tampered_file), real_code_a])
     assert res.exit_code == 1
 
+def test_expired_file(monkeypatch, tmp_path : Path):
+    patch_paths(monkeypatch, tmp_path)
+    runner.invoke(cli.app, ["init"])
+    prompt_file = tmp_path / "prompt.txt"
+    sealed_file = tmp_path / "sealed.json"
+    prompt_file.write_text("Test Prompt", encoding="utf-8")
+    res = runner.invoke(cli.app, ["seal", str(prompt_file), str(sealed_file)], input="1\n0\n")
+        assert res.exit_code == 0
