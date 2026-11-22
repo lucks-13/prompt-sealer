@@ -27,8 +27,7 @@ def check_expire(expires : int) -> bool:
     return int(time.time()) < expires
 
 def verify_code_a (code_a : str, challenge : bytes) -> bool:
-    exp_h = make_code_a(challenge)
-    return hmac.compare_digest(code_a.strip().upper(), exp_h)
+    return hmac.compare_digest(code_a.strip().upper(), make_code_a(challenge))
 
 def write_atomic(source : Path, data : bytes) -> None:
     source.parent.mkdir(parents=True, exist_ok=True)
@@ -50,26 +49,18 @@ def read_state(state_path : Path) -> dict:
     if not state_path.exists():
         return {}
     try:
-        state = json.loads(state_path.read_bytes().decode("utf-8"))
-        if not isinstance(state, dict):
-            raise ValueError
-        return state
+        return json.loads(state_path.read_bytes().decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Authorization state is invalid.") from None
     
 def authorize(source : Path, code_a : str, machine_secret : bytes, file_id : bytes, state_path : Path, signing_key) -> str:
-    if len(machine_secret) != 32:
-        raise ValueError("Invalid machine secret.")
-    if len(file_id) != 32:
-        raise ValueError("Invalid File ID.")
     record = read_sealed(source)
     s_record = dict(record)
     sign = bytes.fromhex(s_record.pop("signature"))
     s_data = json.dumps(s_record, sort_keys=True, separators=(",",":")).encode("utf-8")
     if not check_mark(signing_key.public_key(), sign, s_data):
         raise ValueError("Invalid sealed prompt")
-    files_id = bytes.fromhex(record["file_id"])
-    if not hmac.compare_digest(files_id, file_id):
+    if not hmac.compare_digest(bytes.fromhex(record["file_id"]), file_id):
         raise ValueError("Invalid sealed prompt.")
     if not check_expire(record["expires"]):
         raise ValueError("Prompt file has expired.")
