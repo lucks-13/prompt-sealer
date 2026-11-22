@@ -18,7 +18,29 @@ Everything works as expected but there is a major vulnerability which is once ai
 
 ```
 git clone https://github.com/lucks-13/prompt-sealer.git
+cd prompt-sealer
 ```
+After Installing all the dependency to make sure everything works
+```
+prompt-sealer --help
+```
+
+# Availabe commands.
+
+1. Initialize vault
+
+```
+prompt-sealer init
+```
+
+2. Check vault validity
+
+```
+prompt-sealer check
+```
+
+3. To seal a prompt
+
 ```
 
 ```
