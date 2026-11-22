@@ -49,7 +49,7 @@ def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest 
         sign, machine_secret = open_vault(vault_path)
         file_id = roll_seed()
         challenge = roll_seed()
-        expires = int(time.time()) + 3600
+        expires = int(time.time()) + tt
         seal_file(source, dest, roll_seed(), file_id, expires, challenge, sign, machine_secret)
         typer.echo(f"Prompt sealed : {dest}")
         typer.echo("")
