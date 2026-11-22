@@ -48,4 +48,16 @@ prompt-sealer seal prompt.txt sealed_prompt
 4. Now Share sealed_prompt file to a ai { i tested using claude free chat / free plan }
 
 
-5. Now authorize the 
+5. Now authorize the sealed prompt using Access Code A to get Access Code B
+
+```
+prompt-sealer authorize-prompt sealed_prompt.json <ACCESS_CODE_A>
+```
+
+6. Person A can also redeem the prompt
+
+```
+prompt-sealer redeem-prompt sealed_prompt <ACCESS_CODE_B> redeemed_prompt.txt
+```
+
+7. Now to Destroy the Vault so that existing encrypt 
