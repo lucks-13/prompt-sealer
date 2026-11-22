@@ -68,6 +68,10 @@ prompt-sealer destroy
 
 # What I learned.
 
-* Encrypting and Decrypting payload with AES-256-GCM, HKDF-SHA256 and HMAC-SHA256
-* Signing the file using Ed25519
-* Protecting local secrets with windows DPADI 
+* Encrypting and Decrypting payload with AES-256-GCM, HKDF-SHA256 and HMAC-SHA256.
+* Signing the file using Ed25519.
+* Protecting local secrets with windows DPADI [ win32crypt ] and updating state files atomically.
+
+# Ai Disclosure
+
+I used AI alot but not for code generation coz this a very complicated project so technically i cannot build them without using ai { here ai means chatgpt, gemini, claude not ai agent like claude code, codex } so i use ai as learning assistant to understand cryptographic concepts, simplify code structure 
