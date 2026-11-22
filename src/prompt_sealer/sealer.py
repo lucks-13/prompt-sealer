@@ -191,22 +191,10 @@ def unseal_prompt(blob : bytes, key : bytes) -> bytes:
         },
         sort_keys=True,
         separators=(",", ":")
-        ).encode("utf-8")
-    
+        ).encode("utf-8")    
     return unseal_text(bytes.fromhex(record["ciphertext"]), key, bytes.fromhex(record["nonce"]), extra)
 
 def seal_file(source : Path, dest : Path, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, machine_secret : bytes) -> None:
-    prompt = read_prompt(source)
-    sealed = seal_prompt(prompt, key, file_id, expires, challenge, signing_key, machine_secret)
+    sealed = seal_prompt(read_prompt(source), key, file_id, expires, challenge, signing_key, machine_secret)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(sealed)
-
-def unseal_file(source : Path, dest : Path, key : bytes) -> None:
-    if not source.exists():
-        raise FileNotFoundError("Sealed prompt file does not exist.")
-    if not source.is_file():
-        raise ValueError("Sealed prompt path must be a file.")
-    prompt = unseal_prompt(source.read_bytes(), key)
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_bytes(prompt)
-
