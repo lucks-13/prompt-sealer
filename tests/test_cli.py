@@ -31,4 +31,9 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     record = json.loads(sealed_before.decode("utf-8"))
     assert record["expires"] >= int(time.time()) + 14 * 60
     code_a = sealer.make_code_a(bytes.fromhex(record["challenge"]))
-    res = 
+    res = runner.invoke(cli.app, ["authorize-prompt", str(sealed_file), code_a])
+    assert res.exit_code == 0
+    assert "Access Code B :" in res.stdout
+    code_b = res.stdout.split("Access Code B :")[1].strip().splitlines()[0].strip()
+    assert sealed_file.read_bytes() == sealed_before
+    state 
