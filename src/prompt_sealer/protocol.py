@@ -83,12 +83,7 @@ def authorize(source : Path, code_a : str, machine_secret : bytes, file_id : byt
         "expires" : record["expires"],
         "used" : False
     }
-    state_path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
-    except Exception:
-        state.pop(file_id_hex, None)
-        raise
+    write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
     return code_b
 
 def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
@@ -107,17 +102,8 @@ def redeem(source : Path, code_b : str, state_path : Path) -> bytes:
     code_b_hash = hashlib.sha256(code_b.strip().upper().encode("utf-8")).hexdigest()
     if not hmac.compare_digest(code_b_hash, entry["code_b_hash"]):
         raise ValueError("Invalid access code.")
-    wrap_key = bytes.fromhex(record["wrapped_key"])
-    p_key = unwrap_p_key(wrap_key, code_b, bytes.fromhex(file_id))
+    p_key = unwrap_p_key(bytes.fromhex(record["wrapped_key"]), code_b, bytes.fromhex(file_id))
     plaintext = unseal_prompt(source.read_bytes(), p_key)
-    old_state = state_path.read_bytes() if state_path.exists() else b"{}"
     entry["used"] = True
-    try:
-        write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
-    except Exception:
-        try :
-            write_atomic(state_path, old_state)
-        except Exception:
-            pass
-        raise
+    write_atomic(state_path, json.dumps(state, sort_keys=True, separators=(",",":")).encode("utf-8"))
     return plaintext
