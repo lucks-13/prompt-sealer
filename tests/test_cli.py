@@ -36,4 +36,6 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     assert "Access Code B :" in res.stdout
     code_b = res.stdout.split("Access Code B :")[1].strip().splitlines()[0].strip()
     assert sealed_file.read_bytes() == sealed_before
-    state 
+    state = json.loads(state_file.read_text(encoding="utf-8"))
+    assert state[record["file_id"]]["used"] is False
+    res = runner.invoke(cli.app, ["redeem-prompt", str(sealed_file), code_b, ])
