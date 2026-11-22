@@ -131,7 +131,7 @@ def unwrap_p_key(w_key : bytes, code_b : str, file_id : bytes) -> bytes:
     return unseal_text(w_key[12:], wrap_key, w_key[:12], file_id)
 
 def make_code_a(challenge : bytes) -> str:
-    return hashlib.sha256(b"prompt-sealer-code-a:"+ challenge.hex.encode("ascii")).hexdigest()[:32].upper()
+    return hashlib.sha256(b"prompt-sealer-code-a:" + challenge.hex().encode("ascii")).hexdigest()[:32].upper()
 
 def hash_code_a(code_a : str) -> str:
     return hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
