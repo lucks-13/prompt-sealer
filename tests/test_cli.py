@@ -18,7 +18,7 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     prompt_file = tmp_path / "prompt.txt"
     sealed_file = tmp_path / "sealed.json"
     redeemed_file = tmp_path / "redeemed.txt"
-    prompt_file.write_text("Testing Prompt", encoding="utf-8")
+    prompt_file.write_text("Test Prompt", encoding="utf-8")
     res = runner.invoke(cli.app, ["init"])
     assert res.exit_code == 0
     assert vault_file.exists()
@@ -38,4 +38,10 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     assert sealed_file.read_bytes() == sealed_before
     state = json.loads(state_file.read_text(encoding="utf-8"))
     assert state[record["file_id"]]["used"] is False
-    res = runner.invoke(cli.app, ["redeem-prompt", str(sealed_file), code_b, ])
+    res = runner.invoke(cli.app, ["redeem-prompt", str(sealed_file), code_b, str(redeemed_file)])
+    assert res.exit_code == 0
+    assert redeemed_file.exists()
+    redeemed_text = redeemed_file.read_text(encoding="utf-8")
+    assert "--- Protected User Prompt ---" in redeemed_text
+    assert "Test Prompt" in redeemed_text
+    assert sealed_file.read_bytes() == se
