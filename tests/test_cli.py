@@ -54,4 +54,5 @@ def test_wrong_code_and_tampered(monkeypatch, tmp_path : Path):
     patch_paths(monkeypatch, tmp_path)
     runner.invoke(cli.app, ["init"])
     prompt_file = tmp_path / "prompt.txt"
-    seal
+    sealed_file = tmp_path / "sealed.json"
+    prompt_file.write_text
