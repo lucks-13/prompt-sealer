@@ -80,4 +80,6 @@ def test_expired_file(monkeypatch, tmp_path : Path):
     assert res.exit_code == 0
     record = json.loads(sealed_file.read_text(encoding="utf-8"))
     code_a = sealer.make_code_a(bytes.fromhex(record["challenge"]))
-    monkeypatch.sett
+    monkeypatch.setattr(protocol.time, "time", lambda : record["expires"] + 10)
+    res = runner.invoke(cli.app, ["authorize-prompt", str(sealed_file), code_a])
+    assert res.exit_code == 1
