@@ -5,62 +5,21 @@ import os
 import tempfile
 import time
 from pathlib import Path
-from prompt_sealer.sealer import make_code_a, attach_code_b, unwrap_p_key, unseal_prompt
+from prompt_sealer.sealer import make_code_a, unwrap_p_key, unseal_prompt
 from prompt_sealer.crypto import check_mark
 
 def read_sealed(source : Path) -> dict:
     if not source.exists():
         raise FileNotFoundError("Sealed prompt file does not exists.")
-    if not source.is_file():
-        raise ValueError("Sealed prompt path must be a file.")
     try:
         record = json.loads(source.read_bytes().decode("utf-8"))
-        if set(record) != {
-            "version",
-            "file_id",
-            "expires",
-            "challenge",
-            "code_a_hash",
-            "bootstrap",
-            "nonce",
-            "ciphertext",
-            "wrapped_key",
-            "signature"
-        }:
-            raise ValueError
-        if type(record["version"]) is not int or record["version"] != 1:
-            raise ValueError
-        if len(bytes.fromhex(record["file_id"])) != 32:
-            raise ValueError
-        if not isinstance(record["expires"], int) or record["expires"] <= 0:
-            raise ValueError
-        if len(bytes.fromhex(record["challenge"])) != 32:
-            raise ValueError
-        if not isinstance(record["code_a_hash"], str) or len(record["code_a_hash"]) != 64:
-            raise ValueError
-        if not isinstance(record["bootstrap"], str) or not record["bootstrap"]:
-            raise ValueError
-        nonce = bytes.fromhex(record["nonce"])
-        ciphertext = bytes.fromhex(record["ciphertext"])
-        signature = bytes.fromhex(record["signature"])
-        if len(nonce) != 12 or len(ciphertext) < 16:
-            raise ValueError
-        if len(signature) != 64:
-            raise ValueError
-        if not isinstance(record["wrapped_key"], str):
-            raise ValueError
-        wrap_key = bytes.fromhex(record["wrapped_key"])
-        if len(wrap_key) <= 12:
+        if record["version"] != 1:
             raise ValueError
         return record
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError, ValueError):
         raise ValueError("Prompt file is invalid.") from None
     
 def make_code_b(machine : bytes, file_id : bytes) -> str:
-    if len(machine) != 32:
-        raise ValueError("Machine secret must be exactly 32 bytes.")
-    if len(file_id) != 32:
-        raise ValueError("File ID must be exactly 32 bytes.")
     message = b"prompt-sealer-code-b:" + file_id
     return hmac.new(machine, message, hashlib.sha256).hexdigest()[:32].upper()
 
