@@ -41,6 +41,11 @@ def check():
 @app.command()
 def seal(source : Path = typer.Argument(..., help="Prompt file to seal."), dest : Path = typer.Argument(..., help="Output sealed file.")):
     try:
+        hour = typer.prompt("Expire Hours", default=0, type=int)
+        minute = typer.prompt("Expire Hours", default=10, type=int)
+        tt = hour * 3600 + minute * 60
+        if tt <=0:
+            raise("Expiration Time must be Greater than 0.")
         sign, machine_secret = open_vault(vault_path)
         file_id = roll_seed()
         challenge = roll_seed()
@@ -90,6 +95,6 @@ def destroy(force : bool = typer.Option(False, "--force", help="Delete the vault
     except FileNotFoundError:
         typer.echo("Vault does not exist.")
         raise typer.Exit(code=1)
-
+    
 if __name__ == "__main__":
     app()
