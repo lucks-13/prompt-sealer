@@ -69,7 +69,7 @@ def test_wrong_code_and_tampered(monkeypatch, tmp_path : Path):
     real_code_a = sealer.make_code_a(bytes.fromhex(record["challenge"]))
     res = runner.invoke(cli.app, ["authorize-prompt", str(tampered_file), real_code_a])
     assert res.exit_code == 1
-
+    
 def test_expired_file(monkeypatch, tmp_path : Path):
     patch_paths(monkeypatch, tmp_path)
     runner.invoke(cli.app, ["init"])

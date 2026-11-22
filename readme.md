@@ -3,7 +3,7 @@
 Hello everyone! This project is one of my biggest project where technically this works as i expected but not as i expected. So this this concludes my version 1. { Version 2 Coming soon }
 
 # What my project does.
-A python cli tool build with typer which encrypts prompts.
+A python cli tool build with typer which encrypts prompts. so that your personal prompts stays private.
 
 # My Motive 
 
@@ -46,10 +46,6 @@ prompt-sealer seal prompt.txt sealed_prompt
 
 4. Now Share sealed_prompt file to a ai { i tested using claude free chat / free plan coz its not working on chatgpt }
 
-![Screen Shot](img/1.png)
-![Screen Shot](img/2.png)
-![Screen Shot](img/3.png)
-
 5. Now authorize the sealed prompt using Access Code A to get Access Code B
 
 ```
@@ -67,6 +63,11 @@ prompt-sealer redeem-prompt sealed_prompt <ACCESS_CODE_B> redeemed_prompt.txt
 ```
 prompt-sealer destroy
 ```
+# AI Page
+
+![Screen Shot](img/1.png)
+![Screen Shot](img/2.png)
+![Screen Shot](img/3.png)
 
 # What I learned.
 
