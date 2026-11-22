@@ -42,5 +42,10 @@ prompt-sealer check
 3. To seal a prompt
 
 ```
-
+prompt-sealer seal prompt.txt sealed_prompt
 ```
+
+4. Now Share sealed_prompt file to a ai { i tested using claude free chat / free plan }
+
+
+5. Now authorize the 
