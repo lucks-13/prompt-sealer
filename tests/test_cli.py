@@ -24,4 +24,11 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     assert vault_file.exists()
     res = runner.invoke(cli.app, ["check"])
     assert res.exit_code == 0
-    res = runner.invoke(cli.app)
+    res = runner.invoke(cli.app, ["seal", str(prompt_file), str(sealed_file)], input="0\n15\n")
+    assert res.exit_code == 0
+    assert sealed_file.exists()
+    sealed_before = sealed_file.read_bytes()
+    record = json.loads(sealed_before.decode("utf-8"))
+    assert record["expires"] >= int(time.time()) + 14 * 60
+    code_a = sealer.make_code_a(bytes.fromhex(record["challenge"]))
+    res = 
