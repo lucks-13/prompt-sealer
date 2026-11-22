@@ -131,35 +131,15 @@ def unwrap_p_key(w_key : bytes, code_b : str, file_id : bytes) -> bytes:
     return unseal_text(w_key[12:], wrap_key, w_key[:12], file_id)
 
 def make_code_a(challenge : bytes) -> str:
-    if len(challenge) != 32:
-    val = hashlib.sha256(b"prompt-sealer-code-a:"+ challenge.hex.encode("ascii")).hexdigest()[:32]
-    return val.upper()
+    return hashlib.sha256(b"prompt-sealer-code-a:"+ challenge.hex.encode("ascii")).hexdigest()[:32].upper()
 
 def hash_code_a(code_a : str) -> str:
     return hashlib.sha256(code_a.strip().upper().encode("utf-8")).hexdigest()
 
 def payload(prompt : bytes) -> bytes:
-    if not isinstance(prompt, bytes):
-        raise TypeError("prompt must be bytes.")
-    inst = sys_p.encode("utf-8")
-    return(
-        inst
-        + b"\n\n"
-        + b"--- Protected User Prompt ---\n\n"
-        + prompt
-    )
-
+    return sys_p.encode("utf-8") + b"\n\n--- Protected User Prompt ---\n\n" + prompt
+       
 def seal_prompt(prompt : bytes, key : bytes, file_id : bytes, expires : int, challenge : bytes, signing_key, machine_secret : bytes) -> bytes:
-    if len(key) != 32:
-        raise ValueError("Prompt key must be exactly 32 bytes.")
-    if len(file_id) != 32:
-        raise ValueError("File ID must be exactly 32 bytes.")
-    if len(challenge) != 32:
-        raise ValueError("Challenge must be exactly 32 bytes.")
-    if len(machine_secret) != 32:
-        raise ValueError("Machine secret must be exactly 32 bytes.")
-    if type(expires) is not int or expires <= 0:
-        raise ValueError("Invalid expiration timestamp.")
     code_a = make_code_a(challenge)
     code_a_h = hash_code_a(code_a)
     extra = json.dumps(
