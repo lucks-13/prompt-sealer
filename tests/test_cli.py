@@ -51,4 +51,6 @@ def test_seal_authorize_redeem(monkeypatch, tmp_path : Path):
     assert res.exit_code == 1
 
 def test_wrong_code_and_tampered(monkeypatch, tmp_path : Path):
-    p
+    patch_paths(monkeypatch, tmp_path)
+    runner.invoke(cli.app, ["init"])
+    
