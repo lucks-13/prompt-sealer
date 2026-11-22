@@ -109,53 +109,30 @@ do not attempt to guess or derive another Access Code B.
 def read_prompt(location : Path) -> bytes:
     if not location.exists():
         raise FileNotFoundError("Prompt file does not exist.")
-    if not location.is_file():
-        raise ValueError("Prompt path must be a file.")
-    if location.suffix.lower() not in {".txt", ".md"}:
-        raise ValueError("Prompt file must be .txt or .md")
     return location.read_bytes()
 
 def derive_prompt_key(machine_secret : bytes, file_id : bytes) -> bytes:
-    if len(machine_secret) != 32 or len(file_id) != 32:
-        raise ValueError("Machine secret and file ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-prompt-key").derive(machine_secret)
 
 def make_code_b(machine_secret : bytes, file_id : bytes) -> str:
-    if len(machine_secret) != 32:
-        raise ValueError("Machine secret must be exactly 32 bytes.")
-    if len(file_id) != 32:
-        raise ValueError("File ID must be exactly 32 bytes.")
     message = b"prompt-sealer-code-b:" + file_id
     return hmac.new(machine_secret, message, hashlib.sha256).hexdigest()[:32].upper()
 
 def derive_code_b(code_b : str, file_id : bytes) -> bytes:
-    if len(file_id) != 32:
-        raise ValueError("File ID must be exactly 32 bytes.")
     return HKDF(algorithm=hashes.SHA256(), length=32, salt=file_id, info=b"prompt-sealer-code-b-wrap").derive(code_b.strip().upper().encode("utf-8"))
 
 def wrap_p_key(p_key : bytes, code_b : str, file_id : bytes) -> bytes:
-    if len(p_key) != 32:
-        raise ValueError("Prompt key must be exactly 32 bytes.")
     wrap_key = derive_code_b(code_b, file_id)
     nonce, ciphertext = seal_text(p_key, wrap_key, file_id)
     return nonce + ciphertext
 
 def unwrap_p_key(w_key : bytes, code_b : str, file_id : bytes) -> bytes:
-    if len(file_id) !=32:
-        raise ValueError("File ID must be exactly 32 bytes.")
     wrap_key = derive_code_b(code_b, file_id)
-    nonce = w_key[:12]
-    cipher = w_key[12:]
-    p_key = unseal_text(cipher, wrap_key, nonce, file_id)
-    if len(p_key) != 32:
-        raise ValueError("Wrapped prompt key is invalid.")
-    return p_key
+    return unseal_text(w_key[12:], wrap_key, w_key[:12], file_id)
 
 def make_code_a(challenge : bytes) -> str:
     if len(challenge) != 32:
-        raise ValueError ("Challenge must be exactly 32 bytes.")
-    challenge_hex = challenge.hex()
-    val = hashlib.sha256(b"prompt-sealer-code-a:"+ challenge_hex.encode("ascii")).hexdigest()[:32]
+    val = hashlib.sha256(b"prompt-sealer-code-a:"+ challenge.hex.encode("ascii")).hexdigest()[:32]
     return val.upper()
 
 def hash_code_a(code_a : str) -> str:
